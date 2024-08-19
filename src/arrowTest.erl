@@ -1,7 +1,6 @@
 -module(arrowTest).
 -export([start/0]).
 -include_lib("eunit/include/eunit.hrl").
--include("throws.hrl").
 -import(arrow, [parseComposition/1, resolveComposition/1]).
 
 % for manual testing -----------------------------------------
