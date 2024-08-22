@@ -24,12 +24,13 @@ parseElement([Prefix | Value]) -> P = prefixToType(Prefix), {P, convertToType(P,
 parseElement(_) -> [].
 
 % returns the atom corresponding to each character used as a prefix
-prefixToType(36)  -> function; % $
-prefixToType(58)  -> store;    % :
-prefixToType(120) -> variable; % x
-prefixToType(115) -> string;   % s
-prefixToType(102) -> float;    % f
-prefixToType(105) -> integer;  % i
+prefixToType(36)  -> function;    % $
+prefixToType(35)  -> funcApply;   % #
+prefixToType(58)  -> store;       % :
+prefixToType(120) -> variable;    % x
+prefixToType(115) -> string;      % s
+prefixToType(102) -> float;       % f
+prefixToType(105) -> integer;     % i
 prefixToType(T) -> throw({exception_unsupported_prefix, [T]}).
 
 % converts a value string to the corresponding atom value
@@ -55,6 +56,11 @@ convertToType(integer, Value)  -> try   string:to_integer(Value)
                                         _              -> throw({exception_convert_integer, Value})
                                   catch error:_        -> throw({exception_convert_integer, Value})
                                   end;
+convertToType(funcApply, Value)-> try   string:to_integer(Value) 
+                                  of    { Result, [] } -> Result;
+                                        _              -> throw({exception_convert_integer, Value})
+                                  catch error:_        -> throw({exception_convert_integer, Value})
+                                  end;
 convertToType(T, _) -> throw({exception_unsupported_type, T}).
 
 % --------------------------------------------------------------------------------
@@ -72,25 +78,35 @@ resolveComposition([{store, Value}    |Tail], Tree, [S | Stack]) ->
   resolveComposition(Tail, setTreeVariable(Tree, Value, S), [Stack]);
 
 resolveComposition([{variable, Value} |Tail], Tree, Stack) -> resolveComposition(Tail, Tree, [{variable, Value}|Stack]);
+resolveComposition([{function, Value} |Tail], Tree, Stack) -> 
+  resolveComposition(Tail, Tree, [handleFuncArity(funcList(Value))|Stack]);
 
-resolveComposition([{function, Value} |Tail], Tree, Stack) -> resolveComposition(Tail, Tree, applyFunc(Value, Tree, Stack));
+resolveComposition([{funcApply, Value} |Tail], Tree, [F|Stack]) -> 
+  resolveComposition(Tail, Tree, applyFunc(F, Tree, Stack, Value));
 
 resolveComposition([], T, S) -> {T, S}.
 
-% searches for the function Name on the function list and tries to apply it to the values of the Stack
-%   uses values from the tree in case there are any 'variable' types
-applyFunc(Name, Tree, Stack) -> 
-  {Func, Arity} = funcList(Name),
-  {S, Rest} = try lists:split(Arity, Stack)
-                of    R -> R
-                catch error:badarg -> throw({exception_not_enough_parameters, Name})
-              end,
-  Params =    lists:map(fun(E) -> case E of
-                  {variable, V} -> getTreeVariable(Tree, V);
-                  V -> V
-                end
-              end, S),
+getNFromStack(N, Stack) when is_integer(N) -> 
+  try lists:split(N, Stack)
+    of    R -> R
+    catch error:badarg -> throw({exception_not_enough_values_on_stack, Stack})
+  end;
+getNFromStack(N, _) -> throw({exception_not_integer, N}).
+
+% applies ArgCount arguments to Func
+applyFunc(Func, Tree, Stack, ArgCount) -> 
+  {S, Rest} = getNFromStack(ArgCount, Stack),
+  Params = handleParams(S, Tree),
   [Func(Params)|Rest].
+
+% handles function application parameters
+%   if its a variable gets its value from the tree
+handleParams(Params, Tree) -> 
+  lists:map(fun(E) -> case E of
+      {variable, V} -> getTreeVariable(Tree, V);
+      V -> V
+    end
+  end, Params).
 
 % gets the value of the corresponding position on the tree
 %   the position is an list of numbers from 1 to 9 
@@ -105,11 +121,30 @@ setTreeVariable(Tree, [H|T], Value) ->
   I ++ [setTreeVariable(lists:nth(H, Tree), T, Value) | II];
 setTreeVariable(_, [], Value) -> Value.
 
+handleFuncArity({infinity, F}) -> F;
+handleFuncArity({N, F}) -> curry(N, F).
+
 % the function list
 % returns a tuple with the function (that receives a list) and its arity (the number of parameters)
-funcList("sum")      -> { fun([F, S]) -> F + S end, 2 };
-funcList("multiply") -> { fun([F, S]) -> F * S end, 2 };
-funcList("divide")   -> { fun([F, S]) -> F / S end, 2 };
-funcList("clone")    -> { fun([N, F]) -> lists:duplicate(N, F) end, 2 };
-funcList("concat")   -> { fun([F, S]) -> F ++ S end, 2 };
+funcList("sum")      -> { 2, fun([F, S]) -> F + S end };
+funcList("multiply") -> { 2, fun([F, S]) -> F * S end };
+funcList("divide")   -> { 2, fun([F, S]) -> F / S end };
+funcList("concat")   -> { 2, fun([F, S]) -> F ++ S end };
+
+funcList("clone")    -> { 2, fun([N, F]) -> lists:duplicate(N, F) end };
+
+funcList("list")     -> { infinity, fun(Arr) -> Arr end } ;
+
+funcList("foldl")    -> { 3, fun([F, A0, S]) -> lists:foldl(fun(E, A) -> F([A, E]) end, A0, S) end };
+funcList("map")      -> { 2, fun([F, S])     -> lists:map(fun(E) -> F([E]) end, S) end };
+
 funcList(F) -> throw({exception_unsupported_function, F}).
+
+
+curry(Arity, Func) -> curry(Arity, Func, [], []).
+
+curry(0     , Func , Acc , [])                           -> Func(lists:reverse(Acc));
+curry(Arity , Func , Acc , [ArgH | ArgT]) when Arity > 0 -> curry(Arity - 1, Func, [ArgH | Acc], ArgT);
+curry(Arity , Func , Acc , [])                           -> fun(Args) -> curry(Arity, Func, Acc, Args) end;
+curry(0     , _Func, _Acc, _Args)                        -> throw(exception_too_many_arguments);
+curry(_Arity, _Func, _Acc, _Args)                        -> throw(exception_negative_arity).

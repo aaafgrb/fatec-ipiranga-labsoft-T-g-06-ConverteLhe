@@ -9,8 +9,8 @@ start() -> ok.
 % run tests with {this module}:test() ------------------------------------------
 
 parseComposition_typeConversion_test() -> 
-  C = parseComposition("sabc/i123/f3.2/$concat/:123/x12"), 
-  ?assertEqual([{string, "abc"}, {integer, 123}, {float, 3.2}, {function, "concat"}, {store, [1,2,3]}, {variable, [1,2]}], C).
+  C = parseComposition("sabc/i123/f3.2/#concat/$concat/:123/x12"), 
+  ?assertEqual([{string, "abc"}, {integer, 123}, {float, 3.2}, {funcAsParam, "concat"}, {funcApply, "concat"}, {store, [1,2,3]}, {variable, [1,2]}], C).
 
 parseComposition_forwardSlashEscape_test() -> 
   C = parseComposition("s\\/!@#$%^&*()-+=,.<>[]{}'\"\\あ 間ç"), 
@@ -35,4 +35,4 @@ resolveComposition_functionNotFound_test() ->
 
 resolveComposition_notEnoughParameters_test() -> 
   C = resolveComposition(parseComposition("f2.4/$sum")), 
-  ?assertThrow({exception_not_enough_parameters, "sum"}, C(1)).
+  ?assertThrow({exception_not_enough_values_on_stack, [2.4]}, C(1)).
