@@ -146,5 +146,5 @@ curry(Arity, Func) -> curry(Arity, Func, [], []).
 curry(0     , Func , Acc , [])                           -> Func(lists:reverse(Acc));
 curry(Arity , Func , Acc , [ArgH | ArgT]) when Arity > 0 -> curry(Arity - 1, Func, [ArgH | Acc], ArgT);
 curry(Arity , Func , Acc , [])                           -> fun(Args) -> curry(Arity, Func, Acc, Args) end;
-curry(0     , _Func, _Acc, _Args)                        -> throw(exception_too_many_arguments);
-curry(_Arity, _Func, _Acc, _Args)                        -> throw(exception_negative_arity).
+curry(0     , _Func, _Acc, Args)                         -> throw({exception_too_many_arguments, Args});
+curry(Arity, _Func, _Acc, _Args)                         -> throw({exception_negative_arity, Arity}).
