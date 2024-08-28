@@ -1,4 +1,4 @@
--module(arrowTest).
+-module(arrow_test).
 -export([start/0]).
 -include_lib("eunit/include/eunit.hrl").
 -import(arrow, [parseComposition/1, resolveComposition/1]).
