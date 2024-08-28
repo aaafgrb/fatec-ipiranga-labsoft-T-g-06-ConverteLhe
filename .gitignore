@@ -3,3 +3,4 @@ deps
 .vs
 .erlang.mk
 _rel
+*Zone.Identifier
