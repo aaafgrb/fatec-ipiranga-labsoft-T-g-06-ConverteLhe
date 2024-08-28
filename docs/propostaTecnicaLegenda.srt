@@ -1,0 +1,567 @@
+1
+00:00:00,301 --> 00:00:02,857
+Bom dia, esse é o vídeo da proposta
+
+2
+00:00:02,857 --> 00:00:04,211
+técnica do projeto ConverteLhe.
+
+3
+00:00:05,083 --> 00:00:06,135
+Primeiramente, porque que esse projeto
+
+4
+00:00:06,135 --> 00:00:08,511
+deveria existir? Porque na vida
+
+5
+00:00:08,932 --> 00:00:10,947
+cotidiana de usuários de computador e de
+
+6
+00:00:10,947 --> 00:00:12,421
+celular, que é basicamente todo mundo,
+
+7
+00:00:12,421 --> 00:00:14,376
+vira e mexe existe a necessidade de
+
+8
+00:00:14,376 --> 00:00:16,782
+processar dados. E quando a quantidade
+
+9
+00:00:16,782 --> 00:00:18,496
+desses dados é muito grande, existe a
+
+10
+00:00:18,496 --> 00:00:20,361
+necessidade de um software que faça isso
+
+11
+00:00:20,361 --> 00:00:22,647
+para eles. ConverteLhe é um desses
+
+12
+00:00:22,647 --> 00:00:24,722
+softwares. Por exemplo, digamos que você
+
+13
+00:00:24,722 --> 00:00:26,737
+precise fazer essa conversão.
+
+14
+00:00:27,519 --> 00:00:29,564
+Você tem os seus dados aqui com uma label
+
+15
+00:00:29,564 --> 00:00:30,767
+e uma lista de valores. Você tem uma
+
+16
+00:00:30,767 --> 00:00:33,624
+lista desse desse formato. Você quer
+
+17
+00:00:34,196 --> 00:00:36,481
+adicionar um nos seus valores.
+
+18
+00:00:37,323 --> 00:00:39,519
+Como que você faria isso? Provavelmente
+
+19
+00:00:40,060 --> 00:00:41,865
+você criaria um programa para fazer isso
+
+20
+00:00:41,865 --> 00:00:44,752
+para você, O seu programa, ele le o
+
+21
+00:00:44,752 --> 00:00:47,579
+arquivo de entrada, separa as coisas que
+
+22
+00:00:47,579 --> 00:00:49,504
+a mal tem que ser separada, faz o que ele
+
+23
+00:00:49,504 --> 00:00:51,759
+tem que fazer, nesse caso é somar 1 e
+
+24
+00:00:51,759 --> 00:00:53,744
+depois junta tudo de volta e manda pra
+
+25
+00:00:53,744 --> 00:00:56,451
+um arquivo de saída. A ideia é
+
+26
+00:00:56,451 --> 00:00:59,308
+basicamente essa daqui, não seria muito
+
+27
+00:00:59,308 --> 00:01:01,835
+mais interessante se em vez de você ter
+
+28
+00:01:01,835 --> 00:01:04,241
+que ficar pensando na sintaxe da sua
+
+29
+00:01:04,241 --> 00:01:05,865
+linguagem de programação escolhida, e
+
+30
+00:01:05,865 --> 00:01:08,692
+ficar compilando e ficar debrugando o seu
+
+31
+00:01:08,692 --> 00:01:10,346
+programinha que você só vai usar uma vez
+
+32
+00:01:10,346 --> 00:01:12,060
+na vida e depois vai jogar fora, porque
+
+33
+00:01:12,060 --> 00:01:14,947
+essa é uma situação muito rara. Não
+
+34
+00:01:14,947 --> 00:01:16,181
+existisse um programa para fazer isso
+
+35
+00:01:16,181 --> 00:01:18,737
+para você? Esse é o ConverteLhe. Ele
+
+36
+00:01:18,737 --> 00:01:21,083
+permite que você junte pequenos
+
+37
+00:01:21,083 --> 00:01:24,030
+processos num processo maior, e que você
+
+38
+00:01:24,030 --> 00:01:25,865
+use esse processo maior, essa composição
+
+39
+00:01:25,865 --> 00:01:27,669
+de processos, para converter os seus
+
+40
+00:01:27,669 --> 00:01:30,556
+dados. A interface
+
+41
+00:01:30,556 --> 00:01:33,414
+dele é essa daqui onde você tem
+
+42
+00:01:34,917 --> 00:01:37,714
+a entrada dos dados, a saída dos dados
+
+43
+00:01:38,196 --> 00:01:40,902
+e entre esses 2 você pode escolher como
+
+44
+00:01:40,902 --> 00:01:43,278
+que você vai montar o seu processamento.
+
+45
+00:01:44,271 --> 00:01:46,496
+Aqui tem uma lista de processamentos que
+
+46
+00:01:46,496 --> 00:01:48,060
+você pode usar para compor o seu
+
+47
+00:01:48,782 --> 00:01:51,098
+processamento. E aqui,
+
+48
+00:01:52,090 --> 00:01:54,737
+onde vão entrar os seus dados que serão
+
+49
+00:01:54,737 --> 00:01:57,444 
+convertidos. Ok, então,
+
+50
+00:01:57,444 --> 00:01:59,278
+portanto, os requisitos funcionais são,
+
+51
+00:02:00,241 --> 00:02:03,218
+compor os processamentos, usar
+
+52
+00:02:03,218 --> 00:02:05,023
+esses processamentos para processar os
+
+53
+00:02:05,023 --> 00:02:07,940
+dados, criar
+
+54
+00:02:07,940 --> 00:02:10,376
+um URL de compartilhamento para caso
+
+55
+00:02:10,376 --> 00:02:13,353
+você queira guardar. URL do
+
+56
+00:02:13,353 --> 00:02:14,737
+seu processamento para você usar depois
+
+57
+00:02:15,218 --> 00:02:17,323
+ou se você quiser compartilhar com alguma
+
+58
+00:02:17,323 --> 00:02:20,150
+outra pessoa. Esse manter o usuário, ele
+
+59
+00:02:20,150 --> 00:02:23,128
+não vai ser essencial para o uso
+
+60
+00:02:23,128 --> 00:02:24,993
+desse sistema. O usuário, ele vai poder
+
+61
+00:02:25,414 --> 00:02:28,030
+usar o sistema mesmo sem ter criado uma
+
+62
+00:02:28,030 --> 00:02:30,917
+conta, porém é vai ter um
+
+63
+00:02:30,917 --> 00:02:33,895
+limite que ele pode fazer isso. E se
+
+64
+00:02:33,895 --> 00:02:35,549
+ele quiser passar desse limite, ele vai
+
+65
+00:02:35,549 --> 00:02:37,714
+ter que criar uma conta. Por que isso?
+
+66
+00:02:38,015 --> 00:02:40,782
+Pra evitar robôs. Agora, os
+
+67
+00:02:40,782 --> 00:02:42,707
+requisitos não funcionais, primeiramente,
+
+68
+00:02:42,707 --> 00:02:44,511
+a segurança, muito importante, já que a
+
+69
+00:02:44,511 --> 00:02:45,925
+gente tá lidando com os dados do usuário.
+
+70
+00:02:46,557 --> 00:02:48,842
+A gente precisa de segurança no
+
+71
+00:02:48,902 --> 00:02:50,767
+transporte dos dados e também
+
+72
+00:02:51,338 --> 00:02:54,196
+segurança do usuário. A gente
+
+73
+00:02:54,196 --> 00:02:57,053
+não vai capturar. Nenhum dado do
+
+74
+00:02:57,053 --> 00:02:58,737
+usuário que não seja os dados que ele
+
+75
+00:02:58,737 --> 00:03:00,963
+usou para cadastro, certo? Ou seja, os
+
+76
+00:03:00,963 --> 00:03:03,429
+dados processados não serão armazenados,
+
+77
+00:03:03,429 --> 00:03:05,203
+nem lidos nem nada.
+
+78
+00:03:07,429 --> 00:03:10,015
+Agora, a documentação online é
+
+79
+00:03:10,015 --> 00:03:12,421
+importante porque o usuário pode ter
+
+80
+00:03:12,421 --> 00:03:15,369
+alguma dúvida de como o
+
+81
+00:03:15,369 --> 00:03:18,256
+sistema funciona. E para sanar as dúvidas
+
+82
+00:03:18,256 --> 00:03:20,000
+dele, é necessário uma documentação
+
+83
+00:03:20,000 --> 00:03:22,857
+online e arquitetura MVC para
+
+84
+00:03:22,857 --> 00:03:24,872
+aumentar a qualidade do software, né?
+
+85
+00:03:24,993 --> 00:03:26,797
+Melhorar a manutenibilidade dele.
+
+86
+00:03:27,880 --> 00:03:29,805
+Agora a equipe, a equipe,
+
+87
+00:03:30,887 --> 00:03:33,203
+eu vou fazer tudo. E o
+
+88
+00:03:33,534 --> 00:03:35,399
+orientador é o professor Carlos Aragão. 
+
+89
+00:03:36,662 --> 00:03:39,609
+Bom, agora sobre o gerenciamento
+
+90
+00:03:39,609 --> 00:03:42,256
+dos projeto. Vai ser
+
+91
+00:03:42,256 --> 00:03:44,993
+utilizada a metodologia SCRUM em 5
+
+92
+00:03:44,993 --> 00:03:47,790
+sprints cada, cada uma com 21 dias. A
+
+93
+00:03:47,790 --> 00:03:50,015
+primeira sprint ela é basicamente essa
+
+94
+00:03:50,015 --> 00:03:52,211
+apresentação. E
+
+95
+00:03:52,963 --> 00:03:55,669
+o GitHub, a documentação. Aí a
+
+96
+00:03:55,669 --> 00:03:57,684
+partir da segunda vem o desenvolvimento.
+
+97
+00:03:58,617 --> 00:04:00,602
+Primeiramente o processamento de dados,
+
+98
+00:04:00,722 --> 00:04:03,369
+Segundamente a
+
+99
+00:04:03,369 --> 00:04:05,714
+composição dos processos, os 2,
+
+100
+00:04:06,707 --> 00:04:08,632
+os 2 casos de uso que agregam mais valor.
+
+101
+00:04:09,173 --> 00:04:12,030
+ao produto, primeiro, depois disso
+
+102
+00:04:12,211 --> 00:04:13,293
+o URL de compartilhamento,
+
+103
+00:04:15,128 --> 00:04:17,835
+depois disso, a página de
+
+104
+00:04:17,835 --> 00:04:20,812
+documentação e por último o cadastro.
+
+105
+00:04:21,714 --> 00:04:24,481
+Agora arquitetura, vai ser utilizado o
+
+106
+00:04:24,481 --> 00:04:26,256
+Oracle Cloud para hostear uma máquina
+
+107
+00:04:26,256 --> 00:04:28,963
+Ubuntu 22.04 e nela vai estar rodando
+
+108
+00:04:28,963 --> 00:04:31,549
+o Erlang OTP 24. O projeto
+
+109
+00:04:31,549 --> 00:04:34,376
+Erlang vai ser montado com o Erlang mk
+
+110
+00:04:34,737 --> 00:04:37,715
+e vai ser utilizado o cowboy pra abrir as
+
+111
+00:04:37,715 --> 00:04:40,602
+portas 20, 80 e 443 que
+
+112
+00:04:40,602 --> 00:04:42,015
+vão receber as requisições
+
+113
+00:04:42,346 --> 00:04:44,963
+FTP HTTP e HTTPS pro servidor vai ser
+
+114
+00:04:44,963 --> 00:04:46,677
+utilizado o supabase e a comunicação com
+
+115
+00:04:46,677 --> 00:04:49,203
+ele vai ser feita apenas por requisições
+
+116
+00:04:49,203 --> 00:04:51,369
+HTTP, porque ele não tem API para
+
+117
+00:04:51,519 --> 00:04:54,466
+Erlang, o DNS. Ele vai ser feito por
+
+118
+00:04:54,617 --> 00:04:56,752
+Cloudflare e o frontend
+
+119
+00:04:57,414 --> 00:05:00,090
+com HTML, CCS e JavaScript.
+
+120
+00:05:01,113 --> 00:05:02,677
+Agora, o banco de dados, como eu disse
+
+121
+00:05:02,677 --> 00:05:04,481
+anteriormente, não vai ser capturado, os
+
+122
+00:05:04,481 --> 00:05:07,068
+dados do usuário, as as únicas coisas que
+
+123
+00:05:07,068 --> 00:05:09,083
+a gente quer saber dele é o seu e-mail de
+
+124
+00:05:09,083 --> 00:05:10,948
+cadastro, a sua senha e só
+
+125
+00:05:12,090 --> 00:05:13,745
+o diagrama de classes também bem simples.
+
+126
+00:05:15,038 --> 00:05:17,023
+Só o usuário, a composição e o processo.
+
+127
+00:05:17,354 --> 00:05:19,880
+E perceba que a composição e o processo
+
+128
+00:05:20,301 --> 00:05:22,106
+não ser armazenados no banco de dados, mas
+
+129
+00:05:22,106 --> 00:05:24,030
+sim no servidor que vai estar rodando
+
+130
+00:05:24,572 --> 00:05:26,136
+a página web.
+
+131
+00:05:28,572 --> 00:05:30,707
+Agora as tecnologias utilizadas pro
+
+132
+00:05:30,707 --> 00:05:33,113
+gerenciamento do projeto, né? O Libre
+
+133
+00:05:33,113 --> 00:05:34,527
+Office calc, que é basicamente o Excel,
+
+134
+00:05:34,527 --> 00:05:37,354
+só que é open open source. O Github, o
+
+135
+00:05:37,354 --> 00:05:39,248
+StarUML, e o Microsoft Teams
+
+136
+00:05:40,151 --> 00:05:42,647
+o Figma, o OTP que ele é
+
+137
+00:05:42,707 --> 00:05:45,113
+o open telecom platform
+
+138
+00:05:45,684 --> 00:05:47,459
+que ele é o framework que o Erlang usa.
+
+139
+00:05:48,692 --> 00:05:50,436
+A linguagem de programação: o Erlang e o
+
+140
+00:05:50,436 --> 00:05:52,782
+JavaScript, né? Pro server e pro frontend
+
+141
+00:05:52,782 --> 00:05:54,857
+e o banco de dados: o supabase.
+
+142
+00:05:56,782 --> 00:05:58,015
+E é isso. Um bom dia a todos.
