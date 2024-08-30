@@ -1,4 +1,5 @@
 -module(arrow_test).
+-ifdef(TEST).
 -export([start/0]).
 -include_lib("eunit/include/eunit.hrl").
 -import(arrow, [parseComposition/1, resolveComposition/1]).
@@ -57,3 +58,5 @@ resolveComposition_curryFunc4_test() ->
 resolveComposition_curryFunc5_test() -> 
   F = arrow:resolveComposition(arrow:parseComposition("i20/i30/i40/$list/#3/x1/x1/$sum/#1/$foldl/#3")),
   ?assertThrow({exception_too_many_arguments, [40]}, F(1000)).
+
+-endif.
