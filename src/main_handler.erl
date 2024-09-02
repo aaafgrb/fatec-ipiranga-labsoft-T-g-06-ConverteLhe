@@ -8,7 +8,6 @@
 %   invalid argument type
 %   store doenst exist
 %   variable doesnt exist
-% github actions testing
 
 %--------------------------------------------------------------
 
