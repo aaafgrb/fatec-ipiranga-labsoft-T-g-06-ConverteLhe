@@ -1,0 +1,26 @@
+name: Erlang CI
+
+on:
+  push:
+    branches: [ "dev", main ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-22.04
+
+    container:
+      image: erlang:24
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Compile
+      run: make build
+    - name: Run tests
+      run: make tests
