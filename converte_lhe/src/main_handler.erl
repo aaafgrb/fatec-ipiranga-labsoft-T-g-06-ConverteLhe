@@ -15,15 +15,15 @@ init(Req0, State) ->
     R = try main_model:main(getInputData(Req0), getInputComposition(Req0))
         of V -> V
         catch
-            {exception_incorrect_json_format}           -> {false, <<"incorrect json format">>};
-            {exception_incorrect_json_header, Header}   -> {false, <<"incorrect json header: ", Header/binary>>};
-            _                                           -> {false, <<"unexpected error">>}
+            {exception_incorrect_json_format}         -> {false, <<"incorrect json format">>};
+            {exception_incorrect_json_header, Header} -> {false, <<"incorrect json header: ", Header/binary>>};
+            _                                         -> {false, <<"unexpected error">>}
         end,
 
     C = case R of
-            {true, Res} -> #{<<"result">> => Res, <<"error">> => <<"">>};
+            {true, Res}  -> #{<<"result">> => Res, <<"error">> => <<"">>};
             {false, Err} -> #{<<"result">> => <<"">>, <<"error">> => Err};
-            _ -> #{<<"result">> => <<"">>, <<"error">> => <<"unexpected error">>}
+            _            -> #{<<"result">> => <<"">>, <<"error">> => <<"unexpected error">>}
         end,
     
     Req = cowboy_req:reply(200, #{<<"content-type">> => <<"application/json">>}, jsx:encode(C), Req0),

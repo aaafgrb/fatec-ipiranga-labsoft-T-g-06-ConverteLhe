@@ -79,7 +79,7 @@ resolveComposition([{store, Value}    |Tail], Tree, [S | Stack]) ->
 
 resolveComposition([{variable, Value} |Tail], Tree, Stack) -> resolveComposition(Tail, Tree, [{variable, Value}|Stack]);
 resolveComposition([{function, Value} |Tail], Tree, Stack) -> 
-  resolveComposition(Tail, Tree, [handleFuncArity(funcList(Value))|Stack]);
+  resolveComposition(Tail, Tree, [handleFuncArity(function_list:func(Value))|Stack]);
 
 resolveComposition([{funcApply, Value} |Tail], Tree, [F|Stack]) -> 
   resolveComposition(Tail, Tree, applyFunc(F, Tree, Stack, Value));
@@ -141,23 +141,6 @@ setTreeVariableLoop(_, [], Value) -> Value.
 
 handleFuncArity({infinity, F}) -> F;
 handleFuncArity({N, F}) -> curry(N, F).
-
-% the function list
-% returns a tuple with the function (that receives a list) and its arity (the number of parameters)
-funcList("sum")      -> { 2, fun([F, S]) -> F + S end };
-funcList("multiply") -> { 2, fun([F, S]) -> F * S end };
-funcList("divide")   -> { 2, fun([F, S]) -> F / S end };
-funcList("concat")   -> { 2, fun([F, S]) -> F ++ S end };
-
-funcList("clone")    -> { 2, fun([N, F]) -> lists:duplicate(N, F) end };
-
-funcList("list")     -> { infinity, fun(Arr) -> Arr end } ;
-
-funcList("foldl")    -> { 3, fun([F, A0, S]) -> lists:foldl(fun(E, A) -> F([A, E]) end, A0, S) end };
-funcList("map")      -> { 2, fun([F, S])     -> lists:map(fun(E) -> F([E]) end, S) end };
-
-funcList(F) -> throw({exception_unsupported_function, F}).
-
 
 curry(Arity, Func) -> curry(Arity, Func, [], []).
 
