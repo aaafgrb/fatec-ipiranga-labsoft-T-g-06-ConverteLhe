@@ -2,7 +2,7 @@ name: Erlang CI
 
 on:
   push:
-    branches: [ "dev", main ]
+    branches: [ "dev", "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -21,6 +21,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Compile
-      run: make build
+      run: |
+        cd converte_lhe
+        make
     - name: Run tests
-      run: make tests
+      run: |
+        cd converte_lhe
+        make tests
