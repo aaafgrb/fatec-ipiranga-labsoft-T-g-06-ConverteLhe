@@ -51,6 +51,8 @@ handleException(E) -> case E of
     {exception_convert_variable, V}             -> <<"failed convertion to variable: ", (list_to_binary(V))/binary>>;
     {exception_inexistent_variable_position, V} -> 
         <<"inexistent variable position: ", (list_to_binary(lists:flatten(io_lib:format("~p",[V]))))/binary>>;
+    {exception_bad_argument, V} -> 
+        <<"failed function application to arguments: ", (list_to_binary(lists:flatten(io_lib:format("~p",[V]))))/binary>>;
     {exception_not_enough_values_on_stack, S}   -> 
         <<"not enough values on the stack: ", (list_to_binary(lists:flatten(io_lib:format("~p",[S]))))/binary>>;
     {exception_too_many_arguments, V} -> 

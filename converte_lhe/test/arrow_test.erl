@@ -36,6 +36,10 @@ resolveComposition_invalidTreePos2_test() ->
   C = resolveComposition(parseComposition("i1/:12")), 
   ?assertThrow({exception_inexistent_variable_position, [1,2]}, C(1000)).
 
+resolveComposition_badArg_test() -> 
+  C = resolveComposition(parseComposition("i1/s3/$sum/#2")), 
+  ?assertThrow({exception_bad_argument, ["3", 1]}, C(1000)).
+
 
 resolveComposition_resolve_test() -> 
   C = resolveComposition(parseComposition("i1/f2.4/$sum/#2")), 

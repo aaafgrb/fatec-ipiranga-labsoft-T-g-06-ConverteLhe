@@ -97,7 +97,12 @@ getNFromStack(N, _) -> throw({exception_not_integer, N}).
 applyFunc(Func, Tree, Stack, ArgCount) -> 
   {S, Rest} = getNFromStack(ArgCount, Stack),
   Params = handleParams(S, Tree),
-  [Func(Params)|Rest].
+  try Func(Params) of
+    Res -> [Res|Rest]
+  catch
+    error:badarith -> throw({exception_bad_argument, Params})
+  end.
+  
 
 % handles function application parameters
 %   if its a variable gets its value from the tree
