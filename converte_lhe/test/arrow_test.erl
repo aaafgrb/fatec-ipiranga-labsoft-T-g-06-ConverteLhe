@@ -21,10 +21,20 @@ parseComposition_typeConvertError1_test() -> ?assertThrow({exception_convert_int
 parseComposition_typeConvertError2_test() -> ?assertThrow({exception_convert_float, "abc"}, parseComposition("fabc")).
 parseComposition_typeConvertError3_test() -> ?assertThrow({exception_convert_float, "3"}, parseComposition("f3")).
 parseComposition_typeConvertError4_test() -> ?assertThrow({exception_convert_store, "a123"}, parseComposition(":a123")).
-parseComposition_typeConvertError5_test() -> ?assertThrow({exception_convert_variable, "a123"}, parseComposition("xa123")).
-parseComposition_typeConvertError6_test() -> ?assertThrow({exception_convert_integer, "a"}, parseComposition("#a")).
+parseComposition_typeConvertError5_test() -> ?assertThrow({exception_convert_store, "-1"}, parseComposition(":-1")).
+parseComposition_typeConvertError6_test() -> ?assertThrow({exception_convert_variable, "a123"}, parseComposition("xa123")).
+parseComposition_typeConvertError7_test() -> ?assertThrow({exception_convert_variable, "-11"}, parseComposition("x-11")).
+parseComposition_typeConvertError8_test() -> ?assertThrow({exception_convert_integer, "a"}, parseComposition("#a")).
 
 parseComposition_prefixError_test() -> ?assertThrow({exception_unsupported_prefix, "a"}, parseComposition("a123")).
+
+resolveComposition_invalidTreePos1_test() -> 
+  C = resolveComposition(parseComposition("i1/x12/$sum/#2")), 
+  ?assertThrow({exception_inexistent_variable_position, [1, 2]}, C(1000)).
+
+resolveComposition_invalidTreePos2_test() -> 
+  C = resolveComposition(parseComposition("i1/:1,2")), 
+  ?assertThrow({exception_inexistent_variable_position, [1,2]}, C(1000)).
 
 
 resolveComposition_resolve_test() -> 

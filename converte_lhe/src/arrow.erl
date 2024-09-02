@@ -37,14 +37,14 @@ prefixToType(T) -> throw({exception_unsupported_prefix, [T]}).
 convertToType(function, Value) -> Value;
 convertToType(string, Value)   -> Value;
 convertToType(variable, Value) -> try   string:to_integer(Value) 
-                                  of    { _, [] } -> [ X - 48 || X <- Value ];
-                                        _              -> throw({exception_convert_variable, Value})
-                                  catch error:_        -> throw({exception_convert_variable, Value})
+                                  of    { V, [] } when V > 0 -> [ X - 48 || X <- Value ];
+                                        _                    -> throw({exception_convert_variable, Value})
+                                  catch error:_              -> throw({exception_convert_variable, Value})
                                   end;
 convertToType(store, Value)    -> try   string:to_integer(Value) 
-                                  of    { _, [] } -> [ X - 48 || X <- Value ];
-                                        _              -> throw({exception_convert_store, Value})
-                                  catch error:_        -> throw({exception_convert_store, Value})
+                                  of    { V, [] }  when V > 0 -> [ X - 48 || X <- Value ];
+                                        _                     -> throw({exception_convert_store, Value})
+                                  catch error:_               -> throw({exception_convert_store, Value})
                                   end;
 convertToType(float, Value)    -> try   string:to_float(Value) 
                                   of    { Result, [] } -> Result;
@@ -109,17 +109,30 @@ handleParams(Params, Tree) ->
   end, Params).
 
 % gets the value of the corresponding position on the tree
-%   the position is an list of numbers from 1 to 9 
-%     therefore thats the maximum number of 'branches' a node can have
-getTreeVariable(Tree, [H|T]) -> getTreeVariable(lists:nth(H, Tree), T);
-getTreeVariable(Tree, []) -> Tree.
+getTreeVariable(Tree, Pos) -> 
+  try getTreeVariableLoop(Tree, Pos)
+  of V -> V
+  catch
+    error:function_clause -> throw({ exception_inexistent_variable_position, Pos })
+  end.
+% the position is an list of numbers from 1 to 9 
+%   therefore thats the maximum number of 'branches' a node can have
+getTreeVariableLoop(Tree, [H|T]) -> getTreeVariableLoop(lists:nth(H, Tree), T);
+getTreeVariableLoop(Tree, []) -> Tree.
 
 % returns a tree with the corresponding position substituted by the Value
+setTreeVariable(Tree, Pos, Value) -> 
+  try setTreeVariableLoop(Tree, Pos, Value)
+  of V -> V
+  catch
+    error:function_clause -> throw({ exception_inexistent_variable_position, Pos });
+    error:badarg -> throw({ exception_inexistent_variable_position, Pos })
+  end.
 %   isnt using LCO :(
-setTreeVariable(Tree, [H|T], Value) -> 
+setTreeVariableLoop(Tree, [H|T], Value) -> 
   {I, [_|II]} = lists:split(H - 1, Tree),
-  I ++ [setTreeVariable(lists:nth(H, Tree), T, Value) | II];
-setTreeVariable(_, [], Value) -> Value.
+  I ++ [setTreeVariableLoop(lists:nth(H, Tree), T, Value) | II];
+setTreeVariableLoop(_, [], Value) -> Value.
 
 handleFuncArity({infinity, F}) -> F;
 handleFuncArity({N, F}) -> curry(N, F).
