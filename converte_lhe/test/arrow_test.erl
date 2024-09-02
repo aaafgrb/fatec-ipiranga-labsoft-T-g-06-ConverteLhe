@@ -33,7 +33,7 @@ resolveComposition_invalidTreePos1_test() ->
   ?assertThrow({exception_inexistent_variable_position, [1, 2]}, C(1000)).
 
 resolveComposition_invalidTreePos2_test() -> 
-  C = resolveComposition(parseComposition("i1/:1,2")), 
+  C = resolveComposition(parseComposition("i1/:12")), 
   ?assertThrow({exception_inexistent_variable_position, [1,2]}, C(1000)).
 
 
