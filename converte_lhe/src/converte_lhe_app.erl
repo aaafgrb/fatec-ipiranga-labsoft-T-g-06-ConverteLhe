@@ -6,7 +6,10 @@
 
 start(_Type, _Args) ->
     Dispatch = cowboy_router:compile([
-        {'_', [{"/:comp", main_handler, []}]}
+	{'_', [
+            {"/", cowboy_static, {priv_file, converte_lhe, "/pages/index.html"}},
+            {"/api", main_handler, []}
+        ]}
     ]),
     {ok, _} = cowboy:start_clear(http_listener,
         [{port, 8080}],
