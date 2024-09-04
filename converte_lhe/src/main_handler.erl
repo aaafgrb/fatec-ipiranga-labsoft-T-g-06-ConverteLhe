@@ -3,8 +3,11 @@
 
 -export([init/2]).
 
+% redirect when invalid
+%   make so its only for the website (not http request) if possible
+
 %% currently
-%% only receives url parameter "param" with the composition
+%% only receives url parameter "comp" with the composition
 %% and json containing { "processThis" : string with input values }
 %%   it will not proceed if its not a string
 %%
@@ -17,7 +20,8 @@ init(Req0, State) ->
         catch
             {exception_incorrect_json_format}         -> {false, <<"incorrect json format">>};
             {exception_incorrect_json_header, Header} -> {false, <<"incorrect json header: ", Header/binary>>};
-            _                                         -> {false, <<"unexpected error">>}
+            {exception_empty_composition}             -> {false, <<"no composition provided">>};
+            _:_                                       -> {false, <<"unexpected error">>}
         end,
 
     C = case R of
@@ -33,19 +37,23 @@ init(Req0, State) ->
 
 % gets the input data from the request json
 getInputData(Req0) -> 
-    {ok, JsonBin, _} = read_body(Req0, <<>>),
-    Json = jsx:decode(JsonBin),
-    case maps:find(<<"processThis">>, Json) of 
+    try
+        {ok, JsonBin, _} = read_body(Req0, <<>>),
+        Json = jsx:decode(JsonBin),
+        maps:find(<<"processThis">>, Json) 
+    of 
         {ok, Value} when is_binary(Value) -> [erlang:binary_to_list(Value)];
         {ok, _Value}                      -> throw({exception_incorrect_json_header, <<"processThis">>});
         error                             -> throw({exception_incorrect_json_format})
+    catch
+        error:badarg -> throw({exception_incorrect_json_format})
     end.
 
-% gets the url parameter "param"
+% gets the url parameter "comp"
 getInputComposition(Req0) ->
-    case cowboy_req:match_qs([{param,[], <<>>}], Req0) of
-        #{param := V} -> binary_to_list(V);
-        <<>> -> <<>>
+    case cowboy_req:match_qs([{comp,[], <<>>}], Req0) of
+        #{comp := <<>>} -> throw({exception_empty_composition});
+        #{comp := V}    -> binary_to_list(V)
     end.
 
 %-------------------------------------------------

@@ -8,7 +8,6 @@ main(DataList, CompStr) ->
     try
         CompositionFun = arrow:resolveComposition(arrow:parseComposition(CompStr)),
         Result = lists:map(CompositionFun, DataList),
-        erlang:display(Result),
         Result
     of
         Res -> {true, [handleResult(X) || {_, [X|_]} <- Res]}
