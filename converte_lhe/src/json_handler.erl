@@ -1,4 +1,4 @@
--module(main_handler).
+-module(json_handler).
 -behavior(cowboy_handler).
 
 -export([init/2]).
@@ -29,8 +29,7 @@ init(Req0, State) ->
             {false, Err} -> #{<<"result">> => <<"">>, <<"error">> => Err};
             _            -> #{<<"result">> => <<"">>, <<"error">> => <<"unexpected error">>}
         end,
-    
-    Req = cowboy_req:reply(200, #{<<"content-type">> => <<"application/json">>}, jsx:encode(C), Req0),
+        Req = cowboy_req:reply(200, #{<<"content-type">> => <<"application/json">>}, jsx:encode(C), Req0),
     {ok, Req, State}.
     
 %-------------------------------------------------------------------------------
@@ -63,3 +62,4 @@ read_body(Req0, Acc) ->
         {ok, Data, Req} -> {ok, << Acc/binary, Data/binary >>, Req};
         {more, Data, Req} -> read_body(Req, << Acc/binary, Data/binary >>)
     end.
+

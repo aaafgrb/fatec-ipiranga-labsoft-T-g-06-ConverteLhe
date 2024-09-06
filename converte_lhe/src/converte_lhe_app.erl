@@ -8,7 +8,9 @@ start(_Type, _Args) ->
     Dispatch = cowboy_router:compile([
 	{'_', [
             {"/", cowboy_static, {priv_file, converte_lhe, "/pages/index.html"}},
-            {"/api", main_handler, []}
+            {"/index.js", cowboy_static, {priv_file, converte_lhe, "/pages/index.js"}},
+            {"/api", json_handler, []},
+            {"/form", form_handler, []}
         ]}
     ]),
     {ok, _} = cowboy:start_clear(http_listener,
