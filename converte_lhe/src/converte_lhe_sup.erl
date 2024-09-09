@@ -8,5 +8,7 @@ start_link() ->
 	supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 init([]) ->
-	Procs = [],
+	Procs = [
+		{dao_server, {dao_server, start_link, []}, permanent, 1000, worker, [dao_server]}
+	],
 	{ok, {{one_for_one, 1, 5}, Procs}}.
