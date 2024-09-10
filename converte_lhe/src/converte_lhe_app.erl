@@ -25,7 +25,7 @@ stop(_State) ->
 
 startEtsTable() -> 
     ets:new(
-        supabase_conf, 
+        conf_table, 
         [ named_table
         , set
         , protected
@@ -35,8 +35,13 @@ startEtsTable() ->
         , {write_concurrency, false}
         , {decentralized_counters, false}
         ]),
-    Key = os:getenv("SUPABASE_KEY"),
-    ets:insert(supabase_conf, {url, os:getenv("SUPABASE_URL")}),
-    ets:insert(supabase_conf, {auth_headers, [{"apikey", Key}, {"Authorization", "Bearer " ++ Key}]}).
+    Key = os:getenv("CONVERTELHE_DB_KEY"),
+    ets:insert(conf_table, {db_url, os:getenv("CONVERTELHE_DB_URL")}),
+    ets:insert(conf_table, {db_auth_headers, [{"apikey", Key}, {"Authorization", "Bearer " ++ Key}]}),
+    ets:insert(conf_table, {smtp_sender, os:getenv("CONVERTELHE_SMTP_SENDER")}),
+    ets:insert(conf_table, {smtp_relay, os:getenv("CONVERTELHE_SMTP_RELAY")}),
+    ets:insert(conf_table, {smtp_user, os:getenv("CONVERTELHE_SMTP_USER")}),
+    ets:insert(conf_table, {smtp_pass, os:getenv("CONVERTELHE_SMTP_PASS")}),
+    ets:insert(conf_table, {smtp_port, list_to_integer(os:getenv("CONVERTELHE_SMTP_PORT"))}).
 
 

@@ -4,7 +4,7 @@ PROJECT_VERSION = 0.1.0
 
 LOCAL_DEPS = inets ssl
 
-DEPS = cowboy jsx
+DEPS = cowboy jsx gen_smtp
 dep_cowboy_commit = 2.11.0
 
 REL_DEPS += relx
