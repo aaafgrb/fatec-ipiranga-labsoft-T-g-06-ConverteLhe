@@ -5,6 +5,7 @@
 -export([stop/1]).
 
 start(_Type, _Args) ->
+    startEtsTable(),
     Dispatch = cowboy_router:compile([
 	{'_', [
             {"/", cowboy_static, {priv_file, converte_lhe, "/pages/index.html"}},
@@ -21,3 +22,21 @@ start(_Type, _Args) ->
 
 stop(_State) ->
 	ok = cowboy:stop_listener(http_listener).
+
+startEtsTable() -> 
+    ets:new(
+        supabase_conf, 
+        [ named_table
+        , set
+        , protected
+        , {keypos, 1}
+        , {heir, none}
+        , {read_concurrency, true}
+        , {write_concurrency, false}
+        , {decentralized_counters, false}
+        ]),
+    Key = os:getenv("SUPABASE_KEY"),
+    ets:insert(supabase_conf, {url, os:getenv("SUPABASE_URL")}),
+    ets:insert(supabase_conf, {auth_headers, [{"apikey", Key}, {"Authorization", "Bearer " ++ Key}]}).
+
+
