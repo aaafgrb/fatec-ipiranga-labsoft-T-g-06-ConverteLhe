@@ -1,29 +1,35 @@
 -module(dao).
 
--export([registerUser/1]).
+-export([registerUser/1, registerPassword/2, getUserData/2]).
 
-%registerPassword(Email, Pass) -> gen_server:call(?MODULE, {register_pass, Email, Pass}).
+% todo: 
+%   find a safer (and/or prettier) way to concat the email string
+%   unpack the http response data
+%   make the password setting url
+%   email validation
+%   try catch
 
-% todo: find a safer (and/or prettier) way to concat the email string
 
-% url is the url of the table not the project
-% in case of adding more tables it will be necessary to modify this
-% Email is required to be a list
+% register the email for a password change
 registerUser(Email) -> 
     Url = ets:lookup_element(conf_table, db_url, 2),
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
     Sender = ets:lookup_element(conf_table, smtp_sender, 2),
-    Body = "ababa123",
 
-    httpc:request(
+    K = httpc:request(
         post,
         {   
-            Url, 
+            Url ++ "rpc/newUser", 
             Headers, 
             "application/json", 
-            "{\"email\": \"" ++ Email ++ "\"}"
+            "{\"e\": \"" ++ Email ++ "\"}"
         }, 
         [], []),
+    erlang:display(K),
+
+    
+    Body = "ababa123 ",
+
 
     gen_smtp_client:send(
         { Sender
@@ -39,9 +45,47 @@ registerUser(Email) ->
 
     ok.
 
-% ignoring this for now
-%validadeEmail(Email) -> true.
 
-% validade email
-% send email
-% try catch
+% changes the password of a registered email
+% the key is the key received by the registerUser request
+registerPassword(Key, Pass) ->
+    Url = ets:lookup_element(conf_table, db_url, 2),
+    Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
+    Enc = encrypt(Pass),
+    R = httpc:request(
+        post,
+        {   
+            Url ++ "rpc/newPass", 
+            Headers, 
+            "application/json", 
+            "{\"p\": \"" ++ Enc ++ "\", \"k\": \"" ++ Key ++ "\"}"
+        }, 
+        [], []),
+    erlang:display(R),
+    ok.
+
+
+% received the apikey of the user
+getUserData(Email, Pass) -> 
+    Url = ets:lookup_element(conf_table, db_url, 2),
+    Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
+    Enc = encrypt(Pass),
+    R = httpc:request(
+        post,
+        {   
+            Url ++ "rpc/getKey", 
+            Headers,
+            "application/json", 
+            "{\"p\": \"" ++ Enc ++ "\", \"e\": \"" ++ Email ++ "\"}"
+        }, 
+        [], []),
+    erlang:display(R),
+    ok.
+
+%--------------------------------------------------------------------------------
+
+encrypt(Data) -> 
+    Salt = ets:lookup_element(conf_table, hash_salt, 2),
+    Hash = crypto:hash(sha512, Data ++ Salt),
+    <<SHA512:512/big-unsigned-integer>> = Hash,
+    io_lib:format("~111.36.0b", [SHA512]).

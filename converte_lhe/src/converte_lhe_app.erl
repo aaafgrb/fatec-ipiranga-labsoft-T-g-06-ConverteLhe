@@ -42,6 +42,7 @@ startEtsTable() ->
     ets:insert(conf_table, {smtp_relay, os:getenv("CONVERTELHE_SMTP_RELAY")}),
     ets:insert(conf_table, {smtp_user, os:getenv("CONVERTELHE_SMTP_USER")}),
     ets:insert(conf_table, {smtp_pass, os:getenv("CONVERTELHE_SMTP_PASS")}),
-    ets:insert(conf_table, {smtp_port, list_to_integer(os:getenv("CONVERTELHE_SMTP_PORT"))}).
+    ets:insert(conf_table, {smtp_port, list_to_integer(os:getenv("CONVERTELHE_SMTP_PORT"))}),
+    ets:insert(conf_table, {hash_salt, os:getenv("CONVERTELHE_HASH_SALT")}).
 
 
