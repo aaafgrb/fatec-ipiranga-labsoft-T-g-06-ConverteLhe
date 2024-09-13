@@ -3,7 +3,6 @@
 
 -export([init/2]).
 
-
 % todo
 %   make try catches
 %   test all paths
@@ -19,7 +18,8 @@ init(Req0, State) ->
     catch
         {exception_unsupported_req, R}    -> #{<<"value">> => <<"">>, <<"error">> => <<"unsupported requisition", R/binary>>};
         {exception_incorrect_json_format} -> #{<<"value">> => <<"">>, <<"error">> => <<"incorrect json format">>};
-        {exception_failed_request, N}     -> #{<<"value">> => <<"">>, <<"error">> => list_to_binary("request failed: " ++ (integer_to_list(N)))};
+        {exception_notok_request, N}      -> #{<<"value">> => <<"">>, 
+                                               <<"error">> => list_to_binary("request failed: " ++ (integer_to_list(N)))};
         _:_                               -> #{<<"value">> => <<"">>, <<"error">> => <<"unexpected error">>}
     end,
 

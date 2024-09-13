@@ -13,24 +13,19 @@ registerUser(Email) ->
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
     Sender = ets:lookup_element(conf_table, smtp_sender, 2),
 
-    {ok, {{_, 200, _}, _, K}} = httpc:request(
-        post,
-        {   
-            Url ++ "rpc/newUser", 
-            Headers, 
-            "application/json", 
-            "{\"e\": \"" ++ Email ++ "\"}"
-        }, 
-        [], []),
-    
+    % request the creation of the email's account
+    % expects the password setting key as a return
+    Content = "{\"e\": \"" ++ Email ++ "\"}",
+    R = sendRequest(Url ++ "rpc/newUser", Headers, "application/json", Content),
+
     % removes the extra quotations
-    F = case K of
+    F = case R of
         [34|V] -> lists:droplast(V);
         V -> V
     end,
 
+    % sends the email
     Body = "confirm Convertelhe registration: " ++ ets:lookup_element(conf_table, dns_url, 2) ++ "confirmpass?k=" ++ F,
-
     gen_smtp_client:send(
         { Sender
         , [Email]
@@ -52,42 +47,34 @@ registerPassword(Key, Pass) ->
     Url = ets:lookup_element(conf_table, db_url, 2),
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
     Enc = encrypt(Pass),
-    case     
-        httpc:request(
-            post,
-            {   
-                Url ++ "rpc/newPass", 
-                Headers, 
-                "application/json", 
-                "{\"p\": \"" ++ Enc ++ "\", \"k\": \"" ++ Key ++ "\"}"
-            }, 
-            [], [])
-    of
-        {ok, {{_, 200, _}, _, R}} -> R;
-        {ok, {{_, N, _}, _, _}} -> throw({exception_failed_request, N})
-    end.
+    Content = "{\"p\": \"" ++ Enc ++ "\", \"k\": \"" ++ Key ++ "\"}",
+    sendRequest(Url ++ "rpc/newPass", Headers, "application/json", Content).
 
 
-% received the apikey of the user
+% receives the apikey of the user
 getUserData(Email, Pass) -> 
     Url = ets:lookup_element(conf_table, db_url, 2),
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
     Enc = encrypt(Pass),
-    {ok, {{_, 200, _}, _, R}} =  httpc:request(
-        post,
-        {   
-            Url ++ "rpc/getKey", 
-            Headers,
-            "application/json", 
-            "{\"p\": \"" ++ Enc ++ "\", \"e\": \"" ++ Email ++ "\"}"
-        }, 
-        [], []),
+    Content = "{\"p\": \"" ++ Enc ++ "\", \"e\": \"" ++ Email ++ "\"}",
+    R = sendRequest(Url ++ "rpc/getKey", Headers, "application/json", Content),
+    
     % removes the extra quotations
     case R of
         [34|V] -> lists:droplast(V);
         V -> V
     end.
 %--------------------------------------------------------------------------------
+
+sendRequest(Url, Headers, ContentType, Content) -> 
+    try     
+        httpc:request(post, {Url, Headers, ContentType, Content}, [], [])
+    of
+        {ok, {{_, 200, _}, _, R}} -> R;
+        {ok, {{_, N, _}, _, _}} -> throw({exception_notok_request, N})
+    catch
+        _:_ -> throw({exception_failed_request})
+    end.
 
 encrypt(Data) -> 
     Salt = ets:lookup_element(conf_table, hash_salt, 2),
