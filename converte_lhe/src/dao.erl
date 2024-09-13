@@ -4,10 +4,7 @@
 
 % todo: 
 %   find a safer (and/or prettier) way to concat the email string
-%   unpack the http response data
-%   make the password setting url
 %   email validation
-%   try catch
 
 
 % register the email for a password change
@@ -16,7 +13,7 @@ registerUser(Email) ->
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
     Sender = ets:lookup_element(conf_table, smtp_sender, 2),
 
-    K = httpc:request(
+    {ok, {{_, 200, _}, _, K}} = httpc:request(
         post,
         {   
             Url ++ "rpc/newUser", 
@@ -25,17 +22,20 @@ registerUser(Email) ->
             "{\"e\": \"" ++ Email ++ "\"}"
         }, 
         [], []),
-    erlang:display(K),
-
     
-    Body = "ababa123 ",
+    % removes the extra quotations
+    F = case K of
+        [34|V] -> lists:droplast(V);
+        V -> V
+    end,
 
+    Body = "confirm Convertelhe registration: " ++ ets:lookup_element(conf_table, dns_url, 2) ++ "confirmpass?k=" ++ F,
 
     gen_smtp_client:send(
         { Sender
         , [Email]
         , "Subject: Confirm registration\r\nFrom: ConverteLhe <" ++ Sender ++ 
-            ">\r\nTo: Some Dude <" ++ Email ++ ">\r\n\r\n" ++ Body
+            ">\r\nTo: user <" ++ Email ++ ">\r\n\r\n" ++ Body
         },
         [ {relay, ets:lookup_element(conf_table, smtp_relay, 2)}
         , {username, ets:lookup_element(conf_table, smtp_user, 2)}
@@ -43,7 +43,7 @@ registerUser(Email) ->
         , {port, ets:lookup_element(conf_table, smtp_port, 2)}
         ]),
 
-    ok.
+    F.
 
 
 % changes the password of a registered email
@@ -52,17 +52,20 @@ registerPassword(Key, Pass) ->
     Url = ets:lookup_element(conf_table, db_url, 2),
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
     Enc = encrypt(Pass),
-    R = httpc:request(
-        post,
-        {   
-            Url ++ "rpc/newPass", 
-            Headers, 
-            "application/json", 
-            "{\"p\": \"" ++ Enc ++ "\", \"k\": \"" ++ Key ++ "\"}"
-        }, 
-        [], []),
-    erlang:display(R),
-    ok.
+    case     
+        httpc:request(
+            post,
+            {   
+                Url ++ "rpc/newPass", 
+                Headers, 
+                "application/json", 
+                "{\"p\": \"" ++ Enc ++ "\", \"k\": \"" ++ Key ++ "\"}"
+            }, 
+            [], [])
+    of
+        {ok, {{_, 200, _}, _, R}} -> R;
+        {ok, {{_, N, _}, _, _}} -> throw({exception_failed_request, N})
+    end.
 
 
 % received the apikey of the user
@@ -70,7 +73,7 @@ getUserData(Email, Pass) ->
     Url = ets:lookup_element(conf_table, db_url, 2),
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
     Enc = encrypt(Pass),
-    R = httpc:request(
+    {ok, {{_, 200, _}, _, R}} =  httpc:request(
         post,
         {   
             Url ++ "rpc/getKey", 
@@ -79,9 +82,11 @@ getUserData(Email, Pass) ->
             "{\"p\": \"" ++ Enc ++ "\", \"e\": \"" ++ Email ++ "\"}"
         }, 
         [], []),
-    erlang:display(R),
-    ok.
-
+    % removes the extra quotations
+    case R of
+        [34|V] -> lists:droplast(V);
+        V -> V
+    end.
 %--------------------------------------------------------------------------------
 
 encrypt(Data) -> 

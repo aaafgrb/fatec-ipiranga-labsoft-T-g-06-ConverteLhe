@@ -10,8 +10,13 @@ start(_Type, _Args) ->
 	{'_', [
             {"/", cowboy_static, {priv_file, converte_lhe, "/pages/index.html"}},
             {"/index.js", cowboy_static, {priv_file, converte_lhe, "/pages/index.js"}},
+            {"/user", cowboy_static, {priv_file, converte_lhe, "/pages/user.html"}},
+            {"/user.js", cowboy_static, {priv_file, converte_lhe, "/pages/user.js"}},
+            {"/confirmpass", cowboy_static, {priv_file, converte_lhe, "/pages/changePass.html"}},
+            {"/changePass.js", cowboy_static, {priv_file, converte_lhe, "/pages/changePass.js"}},
             {"/api", json_handler, []},
-            {"/form", form_handler, []}
+            {"/form", form_handler, []},
+            {"/auseronn", user_handler, []}
         ]}
     ]),
     {ok, _} = cowboy:start_clear(http_listener,
@@ -43,6 +48,7 @@ startEtsTable() ->
     ets:insert(conf_table, {smtp_user, os:getenv("CONVERTELHE_SMTP_USER")}),
     ets:insert(conf_table, {smtp_pass, os:getenv("CONVERTELHE_SMTP_PASS")}),
     ets:insert(conf_table, {smtp_port, list_to_integer(os:getenv("CONVERTELHE_SMTP_PORT"))}),
-    ets:insert(conf_table, {hash_salt, os:getenv("CONVERTELHE_HASH_SALT")}).
+    ets:insert(conf_table, {hash_salt, os:getenv("CONVERTELHE_HASH_SALT")}),
+    ets:insert(conf_table, {dns_url, os:getenv("CONVERTELHE_DNS_URL")}).
 
 
