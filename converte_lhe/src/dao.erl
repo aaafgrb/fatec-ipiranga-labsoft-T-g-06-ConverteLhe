@@ -46,8 +46,7 @@ registerUser(Email) ->
 registerPassword(Key, Pass) ->
     Url = ets:lookup_element(conf_table, db_url, 2),
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
-    Enc = encrypt(Pass),
-    Content = "{\"p\": \"" ++ Enc ++ "\", \"k\": \"" ++ Key ++ "\"}",
+    Content = "{\"p\": \"" ++ Pass ++ "\", \"k\": \"" ++ Key ++ "\"}",
     sendRequest(Url ++ "rpc/newPass", Headers, "application/json", Content).
 
 
@@ -55,8 +54,7 @@ registerPassword(Key, Pass) ->
 getUserData(Email, Pass) -> 
     Url = ets:lookup_element(conf_table, db_url, 2),
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
-    Enc = encrypt(Pass),
-    Content = "{\"p\": \"" ++ Enc ++ "\", \"e\": \"" ++ Email ++ "\"}",
+    Content = "{\"p\": \"" ++ Pass ++ "\", \"e\": \"" ++ Email ++ "\"}",
     R = sendRequest(Url ++ "rpc/getKey", Headers, "application/json", Content),
     
     % removes the extra quotations
@@ -75,9 +73,3 @@ sendRequest(Url, Headers, ContentType, Content) ->
     catch
         _:_ -> throw({exception_failed_request})
     end.
-
-encrypt(Data) -> 
-    Salt = ets:lookup_element(conf_table, hash_salt, 2),
-    Hash = crypto:hash(sha512, Data ++ Salt),
-    <<SHA512:512/big-unsigned-integer>> = Hash,
-    io_lib:format("~111.36.0b", [SHA512]).
