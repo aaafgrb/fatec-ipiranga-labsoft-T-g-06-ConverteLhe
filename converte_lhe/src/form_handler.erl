@@ -3,14 +3,17 @@
 
 -export([init/2]).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%% !!! unfinished !!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%% !!! unfinished !!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%% !!! unfinished !!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 %todo: make the exceptions and their catches
 init(Req0, State) ->
-    R = try main_model:main(getInputData(Req0), getInputComposition(Req0))
+    Pattern = "\\r\\n|\\r|\\n",
+    {ok, LineSplitterRegex} = re:compile(Pattern),
+    R = try
+            {Form, _Req1} = acc_multipart(Req0),
+            FormData = getData(Form),
+            {_, Data} = lists:keyfind("formFile", 1, FormData),
+            {_, Comp} = lists:keyfind("comp", 1, FormData),
+            Lines = re:split(binary_to_list(Data), LineSplitterRegex, [{return, list}]),
+            main_model:main(Lines, binary_to_list(Comp))
         of V -> V
         catch
             _:E -> erlang:display(E), {false, <<"unexpected error">>}
@@ -22,47 +25,25 @@ init(Req0, State) ->
             R            -> erlang:display(R), #{<<"result">> => <<"">>, <<"error">> => <<"unexpected error">>}
         end,
         Req = cowboy_req:reply(200, #{<<"content-type">> => <<"application/json">>}, jsx:encode(C), Req0),
+    erlang:display(R),
     {ok, Req, State}.
-
-
 
 %-----------------------------------------------------------------------
 
-% gets the input data from the form file
-%  !! ignoring inTxtBox and apiKey for now
-%  expection only one file, the rest will be ignored
-getInputData(Req0) -> 
-    try
-        {Form, _Req1} = acc_multipart(Req0),
-        erlang:display(Form),
+% tries to extract and format the data of the form
+% returns a tuple with the 'name' field and the data binary
+getData(Form) ->
 
-        erlang:display([{binary:match(element(2, maps:find(<<"content-disposition">>, M)), <<"name=\"formFile\"">>) , maps:find(<<"content-type">>, M), D} || {M, D} <- Form]),
+    Regex = "name=\"([^\"]+)\"",
+    {ok, RegexCompiled} = re:compile(Regex),
 
-        erlang:display([D || {_M, D} <- Form]),
-
-        % if somehow the name of the file or some other part of the content-disposition 
-        %   contains name=\"formFile\" it might produce false positives
-        % !! todo: make this safer
-        R = [D || {M, D} <- Form
-            , binary:match(element(2, maps:find(<<"content-disposition">>, M)), <<"name=\"formFile\"">>) =/= nomatch
-            , maps:find(<<"content-type">>, M) =:= {ok, <<"text/plain">>} 
-        ],
-        erlang:display(R),
-        R
-    of 
-        [] -> throw(exception_no_data);
-        [H|_] -> [erlang:binary_to_list(X) || X <- binary:split(H, [<<13>>, <<10>>], [global])];
-        E -> erlang:display(E), throw(no_catch)
-    catch
-        _:E -> erlang:display(E), throw({exception_catch})
-    end.
-
-% gets the url parameter "comp"
-getInputComposition(Req0) ->
-    case cowboy_req:match_qs([{comp,[], <<>>}], Req0) of
-        #{comp := <<>>} -> throw({exception_empty_composition});
-        #{comp := V}    -> binary_to_list(V)
-    end.
+    lists:map(
+        fun({M, D}) ->
+            case re:run(M, RegexCompiled) of
+                {match, [_,{S,E}|_]} -> {string:substr(M, S+1, E), D}
+            end
+        end,
+        [{binary_to_list(element(2, maps:find(<<"content-disposition">>, M))), D} || {M, D} <- Form]).
 
 %-----------------------------------------------------------------------
 
