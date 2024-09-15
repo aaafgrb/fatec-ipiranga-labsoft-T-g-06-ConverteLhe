@@ -1,3 +1,12 @@
+let cemail = getCookie("convertelheemail");
+if(cemail != ""){
+  let ckey = getCookie("convertelhekey");
+  if(ckey != ""){
+    document.getElementById("emailTxt").value = cemail;
+    document.getElementById("apikeyTxt").value = ckey;
+  }
+}
+
 function newUser() {
   makeReq("newUser", 
     (json) => document.getElementById("feedbackLbl").innerHTML = "fetch result: " + json.value
@@ -5,10 +14,13 @@ function newUser() {
 }
 
 function login() {
+  let email = document.getElementById("emailTxt").value;
   makeReq("login", 
     (json) => { 
       document.getElementById("apikeyTxt").value = json.value; 
       document.getElementById("limiteTxt").value = "unimplemented"; 
+      document.cookie = "convertelhekey=" + json.value + ";path=/";
+      document.cookie = "convertelheemail=" + email + ";path=/";
     }
   );
 }
@@ -44,6 +56,8 @@ async function makeReq(req, callback){
   })
 }
 
+//---------------------------------------------------------------------
+
 async function digestMessage(message) {
   const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
   const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgUint8); // hash the message
@@ -52,4 +66,20 @@ async function digestMessage(message) {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join(""); // convert bytes to hex string
   return hashHex;
+}
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
 }

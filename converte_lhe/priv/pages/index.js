@@ -1,3 +1,9 @@
+let ckey = getCookie("convertelhekey");
+if(ckey != ""){
+  document.getElementById("apikeyTxt").value = ckey;
+}
+
+
 async function sendRequest() {
   const form = document.getElementById("inForm");
   const formData  = new FormData(form);
@@ -25,4 +31,22 @@ function shareButton(){
 function getComp(){
   //hard coded for now
   return "x1/sapp/$concat/#2";
+}
+
+//------------------------------------------------------------------
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
 }
