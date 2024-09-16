@@ -19,8 +19,8 @@ function login() {
     (json) => { 
       document.getElementById("apikeyTxt").value = json.value; 
       document.getElementById("limiteTxt").value = "unimplemented"; 
-      document.cookie = "convertelhekey=" + json.value + ";path=/";
-      document.cookie = "convertelheemail=" + email + ";path=/";
+      document.cookie = "convertelhekey=" + json.value;
+      document.cookie = "convertelheemail=" + email;
     }
   );
 }

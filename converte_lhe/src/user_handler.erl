@@ -30,8 +30,7 @@ init(Req0, State) ->
 % gets the input data from the request json
 getInputData(Req0) -> 
     try
-        {ok, JsonBin, _} = read_body(Req0, <<>>),
-        Json = jsx:decode(JsonBin),
+        {ok, Json, _} = req_util:read_body(Req0, <<>>),
         Req = case maps:find(<<"req">>, Json) of
             {ok, R} -> binary_to_list(R);
             error   -> false
@@ -61,11 +60,3 @@ handleReq({"newPass"   , Email,_Key,_Pass}) when Email =/= false -> dao:register
 handleReq({"newUser"   , Email,_Key,_Pass}) when Email =/= false -> dao:registerUser(Email), "success";
 
 handleReq({Req, _Email, _Pass}) -> throw({exception_unsupported_req, list_to_binary(Req)}).
-
-%--------------------------------------------------------------------------------
-
-read_body(Req0, Acc) ->
-    case cowboy_req:read_body(Req0) of
-        {ok, Data, Req} -> {ok, << Acc/binary, Data/binary >>, Req};
-        {more, Data, Req} -> read_body(Req, << Acc/binary, Data/binary >>)
-    end.
