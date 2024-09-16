@@ -10,10 +10,11 @@ async function sendRequest() {
     
   //todo: insert composition data here
   //formData.append("test", "dataT");
+  formData.append("comp", getComp())
 
   const response = await fetch("./form", {
     method: 'POST',
-    body: formData.append("comp", getComp())
+    body: formData
   });
 
   //todo: show the results on the screen
