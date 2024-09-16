@@ -4,10 +4,10 @@
 -export([init/2]).
 
 init(Req0, State) ->
-    main_controller:main(Req0, State, fun unpackFun/1).
+    main_controller:main(Req0, State, fun unpack_fun/1).
 
 % extracts the Comp and Data
-unpackFun(Req0) -> 
+unpack_fun(Req0) -> 
     Pattern = "\\r\\n|\\r|\\n",
     {ok, LineSplitterRegex} = re:compile(Pattern),
     FormData = req_util:get_form_data(Req0),

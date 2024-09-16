@@ -1,6 +1,6 @@
 -module(dao).
 
--export([registerUser/1, registerPassword/2, getUserData/2]).
+-export([register_user/1, register_password/2, get_user_data/2]).
 
 % todo: 
 %   find a safer (and/or prettier) way to concat the email string
@@ -8,7 +8,7 @@
 
 
 % register the email for a password change
-registerUser(Email) -> 
+register_user(Email) -> 
     Url = ets:lookup_element(conf_table, db_url, 2),
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
     Sender = ets:lookup_element(conf_table, smtp_sender, 2),
@@ -16,7 +16,7 @@ registerUser(Email) ->
     % request the creation of the email's account
     % expects the password setting key as a return
     Content = "{\"e\": \"" ++ Email ++ "\"}",
-    R = sendRequest(Url ++ "rpc/newUser", Headers, "application/json", Content),
+    R = send_request(Url ++ "rpc/newUser", Headers, "application/json", Content),
 
     % removes the extra quotations
     F = case R of
@@ -43,19 +43,19 @@ registerUser(Email) ->
 
 % changes the password of a registered email
 % the key is the key received by the registerUser request
-registerPassword(Key, Pass) ->
+register_password(Key, Pass) ->
     Url = ets:lookup_element(conf_table, db_url, 2),
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
     Content = "{\"p\": \"" ++ Pass ++ "\", \"k\": \"" ++ Key ++ "\"}",
-    sendRequest(Url ++ "rpc/newPass", Headers, "application/json", Content).
+    send_request(Url ++ "rpc/newPass", Headers, "application/json", Content).
 
 
 % receives the apikey of the user
-getUserData(Email, Pass) -> 
+get_user_data(Email, Pass) -> 
     Url = ets:lookup_element(conf_table, db_url, 2),
     Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
     Content = "{\"p\": \"" ++ Pass ++ "\", \"e\": \"" ++ Email ++ "\"}",
-    R = sendRequest(Url ++ "rpc/getKey", Headers, "application/json", Content),
+    R = send_request(Url ++ "rpc/getKey", Headers, "application/json", Content),
     
     % removes the extra quotations
     case R of
@@ -64,7 +64,7 @@ getUserData(Email, Pass) ->
     end.
 %--------------------------------------------------------------------------------
 
-sendRequest(Url, Headers, ContentType, Content) -> 
+send_request(Url, Headers, ContentType, Content) -> 
     try     
         httpc:request(post, {Url, Headers, ContentType, Content}, [], [])
     of

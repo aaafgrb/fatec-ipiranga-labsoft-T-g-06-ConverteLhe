@@ -6,21 +6,21 @@
 %% returns an Either like tuple: {bool, result or error}
 main(DataList, CompStr) -> 
     try
-        CompositionFun = arrow:resolveComposition(arrow:parseComposition(CompStr)),
+        CompositionFun = arrow:resolve_composition(arrow:parse_composition(CompStr)),
         Result = lists:map(CompositionFun, DataList),
         Result
     of
-        Res -> {true, [handleResult(X) || {_, [X|_]} <- Res]}
+        Res -> {true, [handle_result(X) || {_, [X|_]} <- Res]}
     catch
-        _:E -> {false, handleException(E)}
+        _:E -> {false, handle_exception(E)}
     end.
 
 
 %converts the result a string then to binary
-handleResult(X) -> erlang:list_to_binary(lists:flatten(io_lib:format("~p",[X]))).
+handle_result(X) -> erlang:list_to_binary(lists:flatten(io_lib:format("~p",[X]))).
 
 % returns the response based on received exception
-handleException(E) -> case E of
+handle_exception(E) -> case E of
     {exception_unsupported_prefix, P}           -> <<"unsupported prefix: ", (list_to_binary(P))/binary>>;
     {exception_unsupported_function, F}         -> <<"unsupported function: ", (list_to_binary(F))/binary>>;
     {exception_convert_float, V}                -> <<"failed convertion to float: ", (list_to_binary(V))/binary>>;

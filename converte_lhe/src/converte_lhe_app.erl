@@ -5,7 +5,7 @@
 -export([stop/1]).
 
 start(_Type, _Args) ->
-    startEtsTable(),
+    start_ets_table(),
     Dispatch = cowboy_router:compile([
 	{'_', [
             {"/", cowboy_static, {priv_file, converte_lhe, "/pages/index.html"}},
@@ -28,7 +28,7 @@ start(_Type, _Args) ->
 stop(_State) ->
 	ok = cowboy:stop_listener(http_listener).
 
-startEtsTable() -> 
+start_ets_table() -> 
     ets:new(
         conf_table, 
         [ named_table
