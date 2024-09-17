@@ -1,13 +1,7 @@
 -module(arrow_test).
 -ifdef(TEST).
--export([start/0]).
 -include_lib("eunit/include/eunit.hrl").
 -import(arrow, [parse_composition/1, resolve_composition/1]).
-
-% for manual testing -----------------------------------------
-start() -> ok.
-
-% run tests with {this module}:test() ------------------------------------------
 
 parseComposition_typeConversion_test() -> 
     C = parse_composition("sabc/i123/f3.2/$concat/#3/:123/x12"), 

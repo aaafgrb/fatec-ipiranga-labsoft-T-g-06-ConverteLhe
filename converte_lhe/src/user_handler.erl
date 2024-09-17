@@ -3,11 +3,6 @@
 
 -export([init/2]).
 
-% todo
-%   make try catches
-%   test all paths
-%   make the password setting url handler
-
 init(Req0, State) ->
     Content = try 
         D = get_input_data(Req0),

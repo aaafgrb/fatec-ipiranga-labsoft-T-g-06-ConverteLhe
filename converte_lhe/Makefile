@@ -11,4 +11,6 @@ REL_DEPS += relx
 
 DEP_PLUGINS = cowboy
 
+TEST_DEPS = meck
+
 include erlang.mk
