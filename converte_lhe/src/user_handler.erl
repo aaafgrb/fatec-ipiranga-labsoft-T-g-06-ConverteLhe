@@ -16,7 +16,7 @@ init(Req0, State) ->
         false -> #{<<"value">> => <<"">>,            <<"error">> => <<"">>};
         R     -> #{<<"value">> => list_to_binary(R), <<"error">> => <<"">>}
     catch
-        {exception_unsupported_req, R}    -> #{<<"value">> => <<"">>, <<"error">> => <<"unsupported requisition", R/binary>>};
+        {exception_unsupported_req, R}    -> #{<<"value">> => <<"">>, <<"error">> => <<"unsupported requisition: ", R/binary>>};
         {exception_incorrect_json_format} -> #{<<"value">> => <<"">>, <<"error">> => <<"incorrect json format">>};
         {exception_notok_request, N}      -> #{<<"value">> => <<"">>, 
                                                <<"error">> => list_to_binary("request failed: " ++ (integer_to_list(N)))};
@@ -59,4 +59,4 @@ handle_req({"changePass",_Email, Key, Pass}) when (Key =/= false)   and (Pass =/
 handle_req({"newPass"   , Email,_Key,_Pass}) when Email =/= false -> dao:register_user(Email), "success";
 handle_req({"newUser"   , Email,_Key,_Pass}) when Email =/= false -> dao:register_user(Email), "success";
 
-handle_req({Req, _Email, _Pass}) -> throw({exception_unsupported_req, list_to_binary(Req)}).
+handle_req({Req, _Email, _Key, _Pass}) -> throw({exception_unsupported_req, list_to_binary(Req)}).
