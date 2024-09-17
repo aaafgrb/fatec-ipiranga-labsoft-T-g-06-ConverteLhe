@@ -48,7 +48,6 @@ start_ets_table() ->
     ets:insert(conf_table, {smtp_user, os:getenv("CONVERTELHE_SMTP_USER")}),
     ets:insert(conf_table, {smtp_pass, os:getenv("CONVERTELHE_SMTP_PASS")}),
     ets:insert(conf_table, {smtp_port, list_to_integer(os:getenv("CONVERTELHE_SMTP_PORT"))}),
-    ets:insert(conf_table, {hash_salt, os:getenv("CONVERTELHE_HASH_SALT")}),
     ets:insert(conf_table, {dns_url, os:getenv("CONVERTELHE_DNS_URL")}).
 
 
