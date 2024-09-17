@@ -3,8 +3,27 @@ if(ckey != ""){
   document.getElementById("apikeyTxt").value = ckey;
 }
 
+function handleResponse(r){
+  document.getElementById("outTxtBox").value = r.error != "" ? r.error : r.result.join('\n')
+}
 
 async function sendRequest() {
+  let file = document.getElementById("formFile");
+  let response = file.files.length == 0 ? await nonFileRequest() : await fileRequest();
+
+  handleResponse(await response.json());
+}
+
+function nonFileRequest(){
+  const inData = document.getElementById("inTxtBox");
+  var separateLines = inData.value.split(/\r?\n|\r|\n/g);
+  return fetch("./api?comp=" + encodeURIComponent(getComp()), {
+    method: 'POST',
+    body: JSON.stringify({ processThis: separateLines })
+  });
+}
+
+function fileRequest(){
   const form = document.getElementById("inForm");
   const formData  = new FormData(form);
     
@@ -12,13 +31,10 @@ async function sendRequest() {
   //formData.append("test", "dataT");
   formData.append("comp", getComp())
 
-  const response = await fetch("./form", {
+  return fetch("./form", {
     method: 'POST',
     body: formData
   });
-
-  //todo: show the results on the screen
-  console.log(await response.json());
 }
 
 function userButton(){
@@ -26,7 +42,7 @@ function userButton(){
 }
 
 function shareButton(){
-  
+  navigator.clipboard.writeText(window.location.host + "/share?comp=" + encodeURIComponent(getComp()));
 }
 
 function getComp(){

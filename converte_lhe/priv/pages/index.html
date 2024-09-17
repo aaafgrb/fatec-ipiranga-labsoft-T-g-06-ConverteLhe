@@ -24,7 +24,7 @@
               <div class="input-group col">
                 <input class="form-control form-control-file" type="file" name="formFile" id="formFile">
                 <button class="btn btn-primary col-1" type="button" id="buttonSubmit" name="buttonSubmit" onclick="sendRequest()">Go</button>
-                <input class="form-control" type="text" placeholder="API key" id="apikeyTxt" name="apiKey">
+                <input class="form-control" type="password" placeholder="API key" id="apikeyTxt" name="apiKey">
               </div>
               <button class="btn btn-secondary col-1" type="button" onclick="shareButton()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
@@ -32,11 +32,11 @@
                 </svg>
               </button>
             </div>
-            in
-            <div class="input-group">
-              <textarea class="form-control" style="overflow-wrap: normal; overflow-x: scroll;" id="inTxtBox" name="inTxtBox"></textarea>
-            </div>
           </form>
+          in
+          <div class="input-group">
+            <textarea class="form-control" style="overflow-wrap: normal; overflow-x: scroll;" id="inTxtBox" name="inTxtBox"></textarea>
+          </div>
           out
           <div class="input-group">
             <textarea class="form-control" style="overflow-wrap: normal; overflow-x: scroll;" readonly id="outTxtBox" name="outTxtBox" ></textarea>
