@@ -46,8 +46,7 @@ function shareButton(){
 }
 
 function getComp(){
-  //hard coded for now
-  return "x1/sapp/$concat/#2";
+  return getComposition();
 }
 
 //------------------------------------------------------------------

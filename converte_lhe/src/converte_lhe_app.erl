@@ -10,10 +10,15 @@ start(_Type, _Args) ->
 	{'_', [
             {"/", cowboy_static, {priv_file, converte_lhe, "/pages/index.html"}},
             {"/index.js", cowboy_static, {priv_file, converte_lhe, "/pages/index.js"}},
+            {"/connection.js", cowboy_static, {priv_file, converte_lhe, "/pages/connection.js"}},
+            {"/connection.css", cowboy_static, {priv_file, converte_lhe, "/pages/connection.css"}},
+            {"/grid.js", cowboy_static, {priv_file, converte_lhe, "/pages/grid.js"}},
+            {"/grid.css", cowboy_static, {priv_file, converte_lhe, "/pages/grid.css"}},
             {"/user", cowboy_static, {priv_file, converte_lhe, "/pages/user.html"}},
             {"/user.js", cowboy_static, {priv_file, converte_lhe, "/pages/user.js"}},
             {"/confirmpass", cowboy_static, {priv_file, converte_lhe, "/pages/changePass.html"}},
             {"/changePass.js", cowboy_static, {priv_file, converte_lhe, "/pages/changePass.js"}},
+            {"/functionList.json", cowboy_static, {priv_file, converte_lhe, "/pages/functionList.json"}},
             {"/api", json_handler, []},
             {"/form", form_handler, []},
             {"/auseronn", user_handler, []}

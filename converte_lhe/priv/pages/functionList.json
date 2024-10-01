@@ -1,0 +1,129 @@
+{"data": 
+  [ { "label": "constant"
+    , "color": "#ded74e"    
+    , "menu": 
+      [ {"label": "value", "type": "txtbox", "info": "", "data": ""} 
+      , {"label": "type",  "type": "radio", "data": "s",
+          "info": 
+          [ {"label": "integer", "value": "i"}
+          , {"label": "float"  , "value": "f"}
+          , {"label": "string" , "value": "s"}
+          ]
+        }
+      ]
+    , "inPorts": []
+    , "outPorts": 
+      [ { "subtitle": "string", "label": "value", "comp": [ { "type": "menuData", "value": [1,0] } ] }
+      ]
+    }
+
+  , { "label": "to integer"
+    , "color": "#4287f5"
+    , "menu": []
+    , "inPorts": [{"subtitle": "string", "label": "input"}]
+    , "outPorts": 
+      [ {"subtitle": "integer", "label": "output", 
+          "comp": 
+          [ { "type": "constant", "value": "#1"}
+          , { "type": "constant", "value": "$toInt" }
+          , { "type": "inputPort", "value": 0 }
+          ]
+        }
+      ]
+    }
+
+  , { "label": "to float"
+    , "color": "#4287f5"
+    , "menu": []
+    , "inPorts": [{"subtitle": "string", "label": "input"}]
+    , "outPorts": 
+      [ {"subtitle": "float", "label": "output", 
+          "comp": 
+          [ { "type": "constant", "value": "#1"}
+          , { "type": "constant", "value": "$toFloat" }
+          , { "type": "inputPort", "value": 0 }
+          ]
+        }
+      ]
+    }
+
+    , { "label": "to string"
+    , "color": "#4287f5"
+    , "menu": []
+    , "inPorts": [{"subtitle": "value", "label": "input"}]
+    , "outPorts": 
+      [ {"subtitle": "string", "label": "output", 
+          "comp": 
+          [ { "type": "constant", "value": "#1"}
+          , { "type": "constant", "value": "$toString" }
+          , { "type": "inputPort", "value": 0 }
+          ]
+        }
+      ]
+    }
+
+  , { "label": "concat"
+    , "color": "#f2493d"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "string", "label": "str1"}, {"subtitle": "string", "label": "str2"}]
+    , "outPorts": 
+      [ {"subtitle": "string", "label": "output", 
+          "comp": 
+          [ { "type": "constant", "value": "#2"}
+          , { "type": "constant", "value": "$concat" }
+          , { "type": "inputPort", "value": 0 }
+          , { "type": "inputPort", "value": 1 }
+          ]
+        }
+      ]
+    }
+
+  , { "label": "sum"
+    , "color": "#f2493d"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value 1"}, {"subtitle": "number", "label": "value 2"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          [ { "type": "constant", "value": "#2"}
+          , { "type": "constant", "value": "$sum" }
+          , { "type": "inputPort", "value": 0 }
+          , { "type": "inputPort", "value": 1 }
+          ]
+        }
+      ]
+    }
+
+  , { "label": "multiply"
+    , "color": "#f2493d"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value 1"}, {"subtitle": "number", "label": "value 2"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          [ { "type": "constant", "value": "#2"}
+          , { "type": "constant", "value": "$multiply" }
+          , { "type": "inputPort", "value": 0 }
+          , { "type": "inputPort", "value": 1 }
+          ]
+        }
+      ]
+    }
+
+  , { "label": "divide"
+    , "color": "#f2493d"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value 1"}, {"subtitle": "number", "label": "value 2"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          [ { "type": "constant", "value": "#2"}
+          , { "type": "constant", "value": "$divide" }
+          , { "type": "inputPort", "value": 0 }
+          , { "type": "inputPort", "value": 1 }
+          ]
+        }
+      ]
+    }
+  ]
+}

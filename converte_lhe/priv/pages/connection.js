@@ -346,9 +346,11 @@ class NodeShape {
     }
 
     this.element.addEventListener("contextmenu", (e) => {
-      removeCrow(this.posElement);
-      this.remove();
-      e.preventDefault();
+      if(this.posElement.parentNode.classList.contains("crow")){
+        removeCrow(this.posElement);
+        this.remove();
+        e.preventDefault();
+      }
     });
 
     shapeLookup[this.id] = this;
@@ -408,33 +410,58 @@ class NodeShape {
     //console.log(connection.inputPort, connection.outputPort);
   }
 
-  showMenu(){
-    if(this.menuData.length == 0) return;
-    if(menuHolder == this){
-      hideMenu();
-      return;
-    }
-    this.posElement.appendChild(menuPopupElement);
-    clearMenu();
-    populateMenu(this.menuData);
+  onMenuClose(){
 
-    menuPopupElement
-
-    menuPopupElement.style.visibility = "visible";
-    menuHolder = this;
   }
 
-  onCloseMenu(){
-    Array.from(menuPopupElement.children).forEach((f, i) => this.menuData[i].data = f.lastElementChild.value);
-  }
 }
 
 //
 // MENU
 //===========================================================================
+function showMenu(shape){
+  if(shape.menuData.length == 0) return;
+  if(menuHolder == shape){
+    hideMenu();
+    return;
+  }
+  shape.posElement.appendChild(menuPopupElement);
+  clearMenu();
+
+  //populate menu
+  shape.menuData.forEach(function(x){
+    let g = getMenuInputTypeElement(x.type, x.label, x.info, x.data);
+    
+    menuPopupElement.appendChild(g);
+  })
+
+  menuPopupElement.style.visibility = "visible";
+  menuHolder = shape;
+}
+
 function hideMenu(){
   menuPopupElement.style.visibility = "hidden";
-  menuHolder.onCloseMenu();
+
+  //save data
+  Array.from(menuPopupElement.children).forEach((element, index) => {
+    switch(menuHolder.menuData[index].type){
+      case "txtbox":
+        menuHolder.menuData[index].data = element.lastElementChild.value;
+        break;
+      case "radio":
+        let children = element.lastElementChild.children;
+        for(let i = 0; i < children.length; i++){
+          if(children[i].firstElementChild.checked){
+            menuHolder.menuData[index].data = menuHolder.menuData[index].info[i].value;
+            break;
+          }
+        }
+        break;
+      default:
+        throw new Error(`Invalid type ${type}`);
+    }
+  });
+
   menuHolder = null;
 }
 
@@ -442,13 +469,77 @@ function clearMenu(){
   menuPopupElement.innerHTML = '';
 }
 
-function populateMenu(menuData){
-  menuData.forEach(function(x){
-    let g = menuGroupElement.cloneNode(true);
-    g.firstElementChild.innerHTML = x.label;
-    g.lastElementChild.value = x.data;
-    menuPopupElement.appendChild(g);
-  })
+function getMenuData(shape, i){
+  switch(shape.menuData[i].type){
+    case "txtbox":
+      return shape.menuData[i].data;
+    case "radio":
+      return shape.menuData[i].data;
+    default:
+      throw new Error(`Invalid type ${shape.menuData[i].type}`);
+  }
+}
+
+function getMenuInputTypeElement(type, label, info, data){
+  switch(type){
+    case "txtbox":
+      let txtg = document.createElement("div");
+      txtg.classList.add("menu-group");
+
+      let txtl = document.createElement("label");
+      txtl.classList.add("menu-label");
+      txtl.innerHTML = label;
+
+      let txti = document.createElement("input");
+      txti.classList.add("menu-input");
+      txti.value = data;
+
+      txtg.appendChild(txtl);
+      txtg.appendChild(txti);
+
+      return txtg;
+    case "radio":
+      let radg = document.createElement("div");
+      radg.classList.add("menu-group");
+
+      let radl = document.createElement("label");
+      radl.classList.add("menu-label");
+      radl.innerHTML = label;
+
+      let radfs = document.createElement("fieldset");
+
+      info.forEach((elem, i) => {
+        let d = document.createElement("div");
+        d.style.display = "inline-block"
+
+        let l = "menu" + elem.label;
+
+        let radi = document.createElement("input");
+        radi.classList.add("menu-input");
+        radi.type = "radio"
+        radi.checked = elem.value == data;
+        radi.value = elem.value;
+        radi.id = l;
+        radi.name = "menu" + label
+
+        let radll = document.createElement("label");
+        radll.innerHTML = elem.label;
+        radll.setAttribute("for", l);
+
+        d.appendChild(radi);
+        d.appendChild(radll);
+
+        radfs.appendChild(d);
+      })
+
+      radg.appendChild(radl);
+      radg.appendChild(radfs);
+
+      return radg
+    default:
+      throw new Error(`Invalid type ${type}`);
+  }
+  
 }
 
 //
@@ -497,8 +588,7 @@ class Diagram {
     this.dragType = split[1];
 
     if(this.dragType == "shape"){
-      if(menuHolder != null){ menuHolder.onCloseMenu(); }
-      shapeLookup[this.dragId].showMenu();
+      showMenu(shapeLookup[this.dragId]);
     }else{
       if(menuHolder != null){ hideMenu(); }
     }
@@ -555,6 +645,48 @@ function updateConnections(){
 
 function getComposition(){
 
+  let c = getCompositionLoop(outputNodeShape.inputPorts[0]);
+  let r = "";
+  c.forEach(e => r += `${e.replace(/\//g, '\\/')}/`);
+  return r;
+}
+
+function getCompositionLoop(port){
+  
+  //ignoring the case that not all input parameters are inserted for now
+  if(port.connectors.length == 0){
+    return ["null"];
+  }
+
+  let fromPort = port.connectors[0].outputPort;
+  let shape = fromPort.parentNode;
+  let comp = shape.template.outPorts[fromPort.i].comp;
+  let res = [];
+
+  for(let i = comp.length - 1; i >= 0; i--){
+    let r = getCompositionParam(shape, comp[i]);
+    res = res.concat(r)
+  }
+  console.log(res)
+  return res;
+}
+
+function getCompositionParam(shape, compElement){
+  switch(compElement.type){
+    case "constant":
+      return [compElement.value];
+    case "inputPort":
+      return getCompositionLoop(shape.inputPorts[compElement.value]);
+    case "menuData":
+      let r = "";
+      compElement.value.forEach(e => {
+        r += getMenuData(shape, e);
+      });
+      return r;
+    default:
+      throw new Error(`Invalid type ${compElement.type}`);
+
+  }
 }
 
 //
@@ -598,15 +730,15 @@ let menuHolder = null;
 
 const diagram = new Diagram();
 
-new NodeShape(document.querySelector(".srow-input"), 
+const inputNodeShape = new NodeShape(document.querySelector(".srow-input"), 
   { label: "input"
   , color: "#d63c3c"    
   , menu: []
   , inPorts: []
-  , outPorts: [{subtitle: "string", label: "input"}]
+  , outPorts: [{subtitle: "string", label: "input", comp: [ { type: "constant", value: "x1" } ] }]
   });
 
-new NodeShape(document.querySelector(".srow-output"), 
+const outputNodeShape = new NodeShape(document.querySelector(".srow-output"), 
   { label: "output"
   , color: "#d63c3c"
   , menu: []

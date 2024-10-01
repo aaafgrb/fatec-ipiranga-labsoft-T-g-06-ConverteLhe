@@ -231,46 +231,18 @@ frag.appendChild(document.querySelector(".draggable"));
 const draggablePileElement = frag.querySelector(".draggable-pile");
 const draggableElement = frag.querySelector(".draggable");
 
+fetch('functionList.json')
+.then(response => response.json())
+.then(data => {
+    let arrowSection = document.getElementById("arrow-section");
 
-const pile1 = new DraggablePile(
-    { label: "process p"
-    , color: "#cc8945"    
-    , menu: 
-      [ {label: "label1", data: ""}
-      , {label: "label2", data: "default"}
-      ]
-    , inPorts: [{subtitle: "int", label: "value 1"}, {subtitle: "float", label: "value 2"}]
-    , outPorts: [{subtitle: "int", label: "result"}, {subtitle: "float", label: "result 2"}, {subtitle: "int", label: "result 3"}]
+    data.data.forEach(e => {
+        let pile = new DraggablePile(e);
+        arrowSection.appendChild(pile.element);
     })
-
-document.getElementById("arrow-section").appendChild(pile1.element)
-
-const pile2 = new DraggablePile(
-    { label: "process a"
-    , color: "#ded74e"    
-    , menu: 
-      [ {label: "label1", data: ""}
-      , {label: "label2", data: "default"}
-      ]
-    , inPorts: [{subtitle: "int", label: "value 1"}, {subtitle: "float", label: "value 2"}]
-    , outPorts: [{subtitle: "int", label: "result"}, {subtitle: "float", label: "result 2"}, {subtitle: "int", label: "result 3"}]
-    })
-
-document.getElementById("arrow-section").appendChild(pile2.element)
-
-const pile3 = new DraggablePile(
-    { label: "process b"
-    , color: "#4287f5"    
-    , menu: 
-      [ {label: "label1", data: ""}
-      , {label: "label2", data: "default"}
-      ]
-    , inPorts: [{subtitle: "int", label: "value 1"}, {subtitle: "float", label: "value 2"}]
-    , outPorts: [{subtitle: "int", label: "result"}, {subtitle: "float", label: "result 2"}, {subtitle: "int", label: "result 3"}]
-    })
-
-document.getElementById("arrow-section").appendChild(pile3.element)
-
+    
+})
+.catch(error => console.error("Error fetching JSON data:", error));
 
 //optime the performance of this
 const resizeObserver = new ResizeObserver(function(mutations) {updateConnections()});
