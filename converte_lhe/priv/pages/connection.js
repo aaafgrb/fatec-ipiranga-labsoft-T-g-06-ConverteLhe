@@ -170,7 +170,6 @@ class Connector {
 
 
   remove() {
-
     if (this.inputPort) {
       this.inputPort.removeConnector(this);
     }
@@ -379,7 +378,9 @@ class NodeShape {
 
   remove(){
     this.inputPorts.forEach(function(x) { 
-      x.connectors.forEach(c => c.remove())
+      for(let ii = x.connectors.length - 1; ii >= 0; ii--){
+        x.connectors[ii].remove();
+      }
       portLookup[x.id] = null;
       x.parentNode = null;
       let index = ports.indexOf(x);
@@ -389,7 +390,9 @@ class NodeShape {
     });
 
     this.outputPorts.forEach(function(x) { 
-      x.connectors.forEach(c => c.remove())
+      for(let ii = x.connectors.length - 1; ii >= 0; ii--){
+        x.connectors[ii].remove();
+      }
       portLookup[x.id] = null;
       x.parentNode = null;
       let index = ports.indexOf(x);
@@ -408,10 +411,6 @@ class NodeShape {
 
   onConnect(connection){
     //console.log(connection.inputPort, connection.outputPort);
-  }
-
-  onMenuClose(){
-
   }
 
 }
@@ -461,7 +460,6 @@ function hideMenu(){
         throw new Error(`Invalid type ${type}`);
     }
   });
-
   menuHolder = null;
 }
 

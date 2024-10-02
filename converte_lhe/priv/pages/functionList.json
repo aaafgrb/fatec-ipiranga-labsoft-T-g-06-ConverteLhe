@@ -13,7 +13,7 @@
       ]
     , "inPorts": []
     , "outPorts": 
-      [ { "subtitle": "string", "label": "value", "comp": [ { "type": "menuData", "value": [1,0] } ] }
+      [ { "subtitle": "", "label": "value", "comp": [ { "type": "menuData", "value": [1,0] } ] }
       ]
     }
 
