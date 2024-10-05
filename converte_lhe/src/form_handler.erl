@@ -14,4 +14,4 @@ unpack_fun(Req0) ->
     {_, Data} = lists:keyfind("formFile", 1, FormData),
     {_, Comp} = lists:keyfind("comp", 1, FormData),
     Lines = re:split(binary_to_list(Data), LineSplitterRegex, [{return, list}]),
-    {Lines, binary_to_list(Comp)}.
+    {[[X]||X <- Lines], binary_to_list(Comp)}.

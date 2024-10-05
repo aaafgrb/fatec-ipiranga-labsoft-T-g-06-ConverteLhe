@@ -6,9 +6,7 @@
 %%   list of usable functions
 %%   type parsing
 %%   prefix settings
-%%   variable tree getter and setter
 %%
-%% 'Tree' refered down isnt really a tree datatype. its more like a jagged list situation
 
 
 % parse an arrow composition string to a composition part tuple list
@@ -24,9 +22,11 @@ parse_element([Prefix | Value]) -> P = prefix_to_type(Prefix), {P, convert_to_ty
 parse_element(_) -> [].
 
 % returns the atom corresponding to each character used as a prefix
+prefix_to_type(35)  -> inf_param;   % #
 prefix_to_type(36)  -> function;    % $
-prefix_to_type(35)  -> funcApply;   % #
-prefix_to_type(58)  -> store;       % :
+prefix_to_type(60)  -> comp_start;  % <
+prefix_to_type(62)  -> comp_end;    % >
+prefix_to_type(64)  -> fin_param;   % @
 prefix_to_type(120) -> variable;    % x
 prefix_to_type(115) -> string;      % s
 prefix_to_type(102) -> float;       % f
@@ -34,118 +34,135 @@ prefix_to_type(105) -> integer;     % i
 prefix_to_type(T) -> throw({exception_unsupported_prefix, [T]}).
 
 % converts a value string to the corresponding atom value
-convert_to_type(function, Value) -> Value;
-convert_to_type(string, Value)   -> Value;
-convert_to_type(variable, Value) -> try   string:to_integer(Value) 
-                                    of    { V, [] } when V > 0 -> [ X - 48 || X <- Value ];
-                                            _                    -> throw({exception_convert_variable, Value})
-                                    catch error:_              -> throw({exception_convert_variable, Value})
-                                    end;
-convert_to_type(store, Value)    -> try   string:to_integer(Value) 
-                                    of    { V, [] }  when V > 0 -> [ X - 48 || X <- Value ];
-                                            _                     -> throw({exception_convert_store, Value})
-                                    catch error:_               -> throw({exception_convert_store, Value})
-                                    end;
-convert_to_type(float, Value)    -> try   string:to_float(Value) 
-                                    of    { Result, [] } -> Result;
-                                            _              -> throw({exception_convert_float, Value})
-                                    catch error:_        -> throw({exception_convert_float, Value})
-                                    end;
-convert_to_type(integer, Value)  -> try   string:to_integer(Value) 
-                                    of    { Result, [] } -> Result;
-                                            _              -> throw({exception_convert_integer, Value})
-                                    catch error:_        -> throw({exception_convert_integer, Value})
-                                    end;
-convert_to_type(funcApply, Value)-> try   string:to_integer(Value) 
-                                    of    { Result, [] } -> Result;
-                                            _              -> throw({exception_convert_integer, Value})
-                                    catch error:_        -> throw({exception_convert_integer, Value})
-                                    end;
+convert_to_type(function, Value)   -> Value;
+convert_to_type(string, Value)     -> Value;
+convert_to_type(comp_start, Value) -> Value; % the value isnt used for anything currently
+convert_to_type(comp_end, Value)   -> Value; % the value isnt used for anything currently
+convert_to_type(variable, Value)   ->  try   string:to_integer(Value) 
+                                       of    { Result, [] } -> Result;
+                                             _              -> throw({exception_convert_integer, Value})
+                                       catch error:_        -> throw({exception_convert_integer, Value})
+                                       end;
+convert_to_type(float, Value)      ->  try   string:to_float(Value) 
+                                       of    { Result, [] } -> Result;
+                                             _              -> throw({exception_convert_float, Value})
+                                       catch error:_        -> throw({exception_convert_float, Value})
+                                       end;
+convert_to_type(integer, Value)    ->  try   string:to_integer(Value) 
+                                       of    { Result, [] } -> Result;
+                                             _              -> throw({exception_convert_integer, Value})
+                                       catch error:_        -> throw({exception_convert_integer, Value})
+                                       end;
+convert_to_type(inf_param, Value)  ->  try   string:to_integer(Value) 
+                                       of    { Result, [] } -> Result;
+                                             _              -> throw({exception_convert_integer, Value})
+                                       catch error:_        -> throw({exception_convert_integer, Value})
+                                       end;
+convert_to_type(fin_param, Value)  ->  try   string:to_integer(Value) 
+                                       of    { V, [] } when V > 0 -> [ X - 48 || X <- Value ];
+                                             _              -> throw({exception_convert_integer, Value})
+                                       catch error:_        -> throw({exception_convert_integer, Value})
+                                       end;
 convert_to_type(T, _) -> throw({exception_unsupported_type, T}).
 
 % --------------------------------------------------------------------------------
 
 % receives a list of tuples of type and value (the thing that parseComposition returns)
 % returns a function that receives a single parameter and uses it to solve the composition
-resolve_composition(Composition) -> fun(X) -> resolve_composition(Composition, [X], []) end.
+resolve_composition(Composition) -> fun(X) -> resolve_composition(Composition, X, []) end.
 
-resolve_composition([{string, Value}   |Tail], Tree, Stack) -> resolve_composition(Tail, Tree, [Value|Stack]);
-resolve_composition([{float, Value}    |Tail], Tree, Stack) -> resolve_composition(Tail, Tree, [Value|Stack]);
-resolve_composition([{integer, Value}  |Tail], Tree, Stack) -> resolve_composition(Tail, Tree, [Value|Stack]);
+resolve_composition([{string, Value}     |Tail], Param, Stack) -> resolve_composition(Tail, Param, [Value|Stack]);
+resolve_composition([{float, Value}      |Tail], Param, Stack) -> resolve_composition(Tail, Param, [Value|Stack]);
+resolve_composition([{integer, Value}    |Tail], Param, Stack) -> resolve_composition(Tail, Param, [Value|Stack]);
 
-% ?remove or not remove the value from the stack when storing it on the tree?
-resolve_composition([{store, Value}    |Tail], Tree, [S | Stack]) -> 
-    resolve_composition(Tail, set_tree_variable(Tree, Value, S), [Stack]);
+resolve_composition([{comp_start, Value} |Tail], Param, Stack) -> 
+    {Rest, Comp} = get_inner_composition([{comp_start, Value}|Tail]),
+    resolve_composition([Comp|Rest], Param, Stack);
 
-resolve_composition([{variable, Value} |Tail], Tree, Stack) -> resolve_composition(Tail, Tree, [{variable, Value}|Stack]);
-resolve_composition([{function, Value} |Tail], Tree, Stack) -> 
-    resolve_composition(Tail, Tree, [handle_func_arity(function_list:func(Value))|Stack]);
+% ignoring composition end with no start
+resolve_composition([{comp_end, _Value}  |Tail], Param, Stack) -> resolve_composition(Tail, Param, Stack);
 
-resolve_composition([{funcApply, Value} |Tail], Tree, [F|Stack]) -> 
-    resolve_composition(Tail, Tree, apply_func(F, Tree, Stack, Value));
+resolve_composition([{variable, Value}   |Tail], Param, Stack) -> resolve_composition(Tail, Param, [{variable, Value}|Stack]);
+resolve_composition([{function, Value}   |Tail], Param, Stack) -> resolve_composition(Tail, Param, [handle_func_arity(function_list:func(Value))|Stack]);
+resolve_composition([{composition, Value}|Tail], Param, Stack) -> resolve_composition(Tail, Param, [handle_func_arity(Value)|Stack]);
 
-resolve_composition([], T, S) -> {T, S}.
+resolve_composition([{inf_param, Value}  |Tail], Param, [F|Stack]) -> resolve_composition(Tail, Param, apply_inf_param(F, Param, Stack, Value));
+resolve_composition([{fin_param, Value}  |Tail], Param, [F|Stack]) -> resolve_composition(Tail, Param, apply_fin_param(F, Param, Stack, Value));
+resolve_composition([], _P, [])    -> throw({exception_empty_composition});
+resolve_composition([], _P, [S|_]) -> S.
 
-get_n_from_stack(N, Stack) when is_integer(N) -> 
-    try lists:split(N, Stack)
-        of    R -> R
-        catch error:badarg -> throw({exception_not_enough_values_on_stack, Stack})
+
+get_inner_composition([{comp_start,_Value} |Tail]) -> get_inner_composition(Tail, [], 0, 1).
+get_inner_composition([{comp_end  , Value} |Tail], Stack, Arity, Deph) -> get_inner_composition(Tail, [{comp_end  , Value}|Stack], Arity, Deph - 1);
+get_inner_composition([{comp_start, Value} |Tail], Stack, Arity, Deph) -> get_inner_composition(Tail, [{comp_start, Value}|Stack], Arity, Deph + 1);
+get_inner_composition([{variable, Value}   |Tail], Stack, Arity, 1) when Arity < Value -> get_inner_composition(Tail, [{variable, Value}|Stack], Value, 1);
+get_inner_composition(Stack0, [{comp_end,_Value}|Tail], Arity, 0) -> {Stack0, {composition, {Arity, resolve_composition(lists:reverse(Tail))}}};
+get_inner_composition([Head|Tail], Stack, Arity, Deph)            -> get_inner_composition(Tail, [Head|Stack], Arity, Deph);
+get_inner_composition([], _Stack, _Arity, _Deph)                  -> throw({exception_non_closing_composition}).
+
+
+handle_func_arity({infinity, F}) -> inf_func(F);
+handle_func_arity({A, F})        -> fin_func(A, F).
+
+apply_inf_param(Func, Param, Stack, Count) -> 
+    {Args, Rest} = handle_infinite_params(Param, Stack, Count),
+    apply_func(Func, Args, Rest).
+
+apply_fin_param(Func, Param, Stack, Indexes) ->
+    {Args, Rest} = handle_finite_params(Param, Stack, Indexes),
+    apply_func(Func, Args, Rest).
+
+apply_func(Func, Args, Rest) ->
+    try   Func(Args) 
+    of    Res -> [Res|Rest]
+    catch error:badarith -> throw({exception_bad_argument, Args})
+    end.
+
+handle_infinite_params(Param, Stack, Count) -> handle_infinite_params(Param, Stack, Count, []).
+handle_infinite_params(_    , []           , Count, _  ) when Count > 0 -> throw({exception_not_enough_values_on_stack});
+handle_infinite_params(Param, [SHead|STail], Count, Acc) when Count > 0 -> handle_infinite_params(Param, STail, Count - 1, [handle_param_type(Param, SHead)|Acc]);
+handle_infinite_params(_    , Stack        , 0    , Acc) -> {lists:reverse(Acc), Stack};
+handle_infinite_params(_    , _            , _    , _  ) -> throw({exception_negative_arity}).
+
+handle_finite_params(Param, Stack, Indexes) -> handle_finite_params(Param, Stack, Indexes, []).
+handle_finite_params(Param, [SHead|STail], [Index|ITail], Acc) -> handle_finite_params(Param, STail, ITail, [{indexed, Index, handle_param_type(Param, SHead)}|Acc]);
+handle_finite_params(_    , Stack                , []   , Acc) -> {lists:reverse(Acc), Stack};
+handle_finite_params(_    , []                   , [_|_], _  ) -> throw({exception_not_enough_values_on_stack}).
+
+handle_param_type(Param , {variable, V}) -> try   lists:nth(V, Param)
+                                            catch _:_ -> throw({exception_inexistent_variable_position, V})
+                                            end;
+handle_param_type(_Param, V) -> V.
+
+
+inf_func(Func) -> fun(Args) -> inf_func(Func, Args) end.
+inf_func(Func, [{indexed, Index, Value} | Tail]) -> 
+    inf_func(Func, 
+        [V || {indexed, _I, V} <- lists:sort(fun({indexed, IA, _A}, {indexed, IB, _B} ) -> IA =< IB end, [{indexed, Index, Value} | Tail])]
+    );
+inf_func(Func, Args) -> Func(Args).
+
+
+fin_func(Arity, Func) -> fin_func(lists:duplicate(Arity, null), Func, []).
+fin_func(Args, Func, []) ->
+    case lists:filter(fun(X) -> X =:= null end, Args) of
+        []  -> Func(Args);
+        _   -> fun(Params) -> fin_func(Args, Func, Params) end
     end;
-get_n_from_stack(N, _) -> throw({exception_not_integer, N}).
 
-% applies ArgCount arguments to Func
-apply_func(Func, Tree, Stack, ArgCount) -> 
-    {S, Rest} = get_n_from_stack(ArgCount, Stack),
-    Params = handle_params(S, Tree),
-    try Func(Params) of
-        Res -> [Res|Rest]
-    catch
-        error:badarith -> throw({exception_bad_argument, Params})
-    end.
-  
+fin_func(Args , Func , [{indexed, Index, Value} | Tail]) -> 
+    try   lists:split(Index - 1, Args) 
+    of    {I, [_|II]} -> fin_func(I ++ [Value | II], Func, Tail);
+          _   -> throw({exception_too_many_arguments, Index}) 
+    catch _:_ -> throw({exception_too_many_arguments, Index})
+    end;
 
-% handles function application parameters
-%   if its a variable gets its value from the tree
-handle_params(Params, Tree) -> 
-    lists:map(fun(E) -> case E of
-        {variable, V} -> get_tree_variable(Tree, V);
-        V -> V
-        end
-    end, Params).
+fin_func(Args , Func , [Value | Tail]) -> 
+    try   lists:splitwith(fun(A) -> A =/= null end, Args)
+    of    {_  , []}         -> throw({exception_too_many_arguments, [Value | Tail]});
+          {Bef, [null|Aft]} -> fin_func(Bef ++ [Value | Aft], Func, Tail);
+          _   -> throw({exception_too_many_arguments, [Value | Tail]}) 
+    catch _:_ -> throw({exception_too_many_arguments, [Value | Tail]})
+    end;
 
-% gets the value of the corresponding position on the tree
-get_tree_variable(Tree, Pos) -> 
-    try get_tree_variable_loop(Tree, Pos)
-    of V -> V
-    catch
-        error:function_clause -> throw({ exception_inexistent_variable_position, Pos })
-    end.
-% the position is an list of numbers from 1 to 9 
-%   therefore thats the maximum number of 'branches' a node can have
-get_tree_variable_loop(Tree, [H|T]) -> get_tree_variable_loop(lists:nth(H, Tree), T);
-get_tree_variable_loop(Tree, []) -> Tree.
-
-% returns a tree with the corresponding position substituted by the Value
-set_tree_variable(Tree, Pos, Value) -> 
-    try set_tree_variable_loop(Tree, Pos, Value)
-    of V -> V
-    catch
-        error:function_clause -> throw({ exception_inexistent_variable_position, Pos });
-        error:badarg -> throw({ exception_inexistent_variable_position, Pos })
-    end.
-%   isnt using LCO :(
-set_tree_variable_loop(Tree, [H|T], Value) -> 
-    {I, [_|II]} = lists:split(H - 1, Tree),
-    I ++ [set_tree_variable_loop(lists:nth(H, Tree), T, Value) | II];
-set_tree_variable_loop(_, [], Value) -> Value.
-
-handle_func_arity({infinity, F}) -> F;
-handle_func_arity({N, F}) -> curry(N, F).
-
-curry(Arity, Func) -> curry(Arity, Func, [], []).
-
-curry(0     , Func , Acc , [])                           -> Func(lists:reverse(Acc));
-curry(Arity , Func , Acc , [ArgH | ArgT]) when Arity > 0 -> curry(Arity - 1, Func, [ArgH | Acc], ArgT);
-curry(Arity , Func , Acc , [])                           -> fun(Args) -> curry(Arity, Func, Acc, Args) end;
-curry(0     , _Func, _Acc, Args)                         -> throw({exception_too_many_arguments, Args});
-curry(Arity, _Func, _Acc, _Args)                         -> throw({exception_negative_arity, Arity}).
+fin_func(_Args, _Func, Input) -> throw({exception_incorrect_parameter, Input}).
