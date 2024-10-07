@@ -29,6 +29,11 @@ func("concat")   -> { 2, fun([F, S]) -> F ++ S end };
 
 func("clone")    -> { 2, fun([N, F]) -> lists:duplicate(N, F) end };
 
+func("range")    -> { 2, fun([F, S]) -> try lists:seq(F, S) 
+                                        of R -> R
+                                        catch _:function_clause -> []
+                                        end end };
+
 func("list")     -> { infinity, fun(Arr) -> Arr end } ;
 
 func("foldl")    -> { 3, fun([F, A0, S]) -> lists:foldl(fun(E, A) -> F([A, E]) end, A0, S) end };

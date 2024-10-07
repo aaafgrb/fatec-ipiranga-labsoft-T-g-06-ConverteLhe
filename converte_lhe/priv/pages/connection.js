@@ -419,11 +419,10 @@ class NodeShape {
 // MENU
 //===========================================================================
 function showMenu(shape){
+  hideMenu();
   if(shape.menuData.length == 0) return;
-  if(menuHolder == shape){
-    hideMenu();
-    return;
-  }
+  if(menuHolder == shape) return;
+  
   shape.posElement.appendChild(menuPopupElement);
   clearMenu();
 
@@ -439,8 +438,8 @@ function showMenu(shape){
 }
 
 function hideMenu(){
+  if(menuHolder == null) return;
   menuPopupElement.style.visibility = "hidden";
-
   //save data
   Array.from(menuPopupElement.children).forEach((element, index) => {
     switch(menuHolder.menuData[index].type){
@@ -588,7 +587,7 @@ class Diagram {
     if(this.dragType == "shape"){
       showMenu(shapeLookup[this.dragId]);
     }else{
-      if(menuHolder != null){ hideMenu(); }
+      hideMenu(); 
     }
   }
 
@@ -644,28 +643,51 @@ function updateConnections(){
 function getComposition(){
 
   let c = getCompositionLoop(outputNodeShape.inputPorts[0]);
+  if(c == null) c = [];
   let r = "";
   c.forEach(e => r += `${e.replace(/\//g, '\\/')}/`);
   return r;
 }
 
 function getCompositionLoop(port){
-  
-  //ignoring the case that not all input parameters are inserted for now
   if(port.connectors.length == 0){
-    return ["null"];
+    return null;
   }
 
   let fromPort = port.connectors[0].outputPort;
   let shape = fromPort.parentNode;
   let comp = shape.template.outPorts[fromPort.i].comp;
   let res = [];
-
-  for(let i = comp.length - 1; i >= 0; i--){
-    let r = getCompositionParam(shape, comp[i]);
-    res = res.concat(r)
+  switch (comp.type){
+    case "func":
+      let count = [];
+      for(let i = comp.params.length - 1; i >= 0; i--){
+        let r = getCompositionParam(shape, comp.params[i]);
+        if(r != null){
+          count.push(i);
+          res = res.concat(r);
+        }
+      }
+      res.push(comp.func);
+      res.push(count.length != comp.params.length ?
+        `@${count.reverse().map(x => (x + 1),toString()).join('')}` :
+        `#${comp.params.length}`);
+      break;
+    case "const":
+      let r = getCompositionParam(shape, comp.const);
+      if(r == null){ r = []; }
+      res = res.concat(r);
+      break;
+    case "comp":
+      let c = getCompositionParam(shape, comp.comp)
+      if(c == null){ c = []; }
+      res.push("<");
+      res = res.concat(c);
+      res.push(">");
+      break;
+    default: 
+      throw new Error(`Invalid type ${comp.type}`);
   }
-  console.log(res)
   return res;
 }
 
@@ -678,9 +700,9 @@ function getCompositionParam(shape, compElement){
     case "menuData":
       let r = "";
       compElement.value.forEach(e => {
-        r += getMenuData(shape, e);
+        r += (typeof e === 'string' || e instanceof String) ? e : getMenuData(shape, e);
       });
-      return r;
+      return [r];
     default:
       throw new Error(`Invalid type ${compElement.type}`);
 
@@ -730,15 +752,20 @@ const diagram = new Diagram();
 
 const inputNodeShape = new NodeShape(document.querySelector(".srow-input"), 
   { label: "input"
-  , color: "#d63c3c"    
+  , color: "#8039cc"    
   , menu: []
   , inPorts: []
-  , outPorts: [{subtitle: "string", label: "input", comp: [ { type: "constant", value: "x1" } ] }]
+  , outPorts: [{subtitle: "string", label: "input", 
+    comp: 
+      { type: "const"
+      , const: { type: "constant", value: "x1" }
+      }
+  }]
   });
 
 const outputNodeShape = new NodeShape(document.querySelector(".srow-output"), 
   { label: "output"
-  , color: "#d63c3c"
+  , color: "#8039cc"
   , menu: []
   , inPorts: [{subtitle: "value", label: "output"}]
   , outPorts: []
