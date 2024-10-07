@@ -752,7 +752,7 @@ const diagram = new Diagram();
 
 const inputNodeShape = new NodeShape(document.querySelector(".srow-input"), 
   { label: "input"
-  , color: "#8039cc"    
+  , color: "#B372CA"    
   , menu: []
   , inPorts: []
   , outPorts: [{subtitle: "string", label: "input", 
@@ -765,7 +765,7 @@ const inputNodeShape = new NodeShape(document.querySelector(".srow-input"),
 
 const outputNodeShape = new NodeShape(document.querySelector(".srow-output"), 
   { label: "output"
-  , color: "#8039cc"
+  , color: "#B372CA"
   , menu: []
   , inPorts: [{subtitle: "value", label: "output"}]
   , outPorts: []
