@@ -17,7 +17,10 @@ main(DataList, CompStr) ->
 
 
 %converts the result a string then to binary
-handle_result(X) -> erlang:list_to_binary(lists:flatten(io_lib:format("~w",[X]))).
+handle_result(X) -> case io_lib:printable_list(X) of
+        true  -> erlang:list_to_binary(lists:flatten(io_lib:format("~s",[X])));
+        false -> erlang:list_to_binary(lists:flatten(io_lib:format("~w",[X])))
+    end.
 
 % returns the response based on received exception
 handle_exception(E) -> case E of

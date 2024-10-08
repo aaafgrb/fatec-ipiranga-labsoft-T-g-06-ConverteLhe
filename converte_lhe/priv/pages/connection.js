@@ -645,7 +645,7 @@ function getComposition(){
   let c = getCompositionLoop(outputNodeShape.inputPorts[0]);
   if(c == null) c = [];
   let r = "";
-  c.forEach(e => r += `${e.replace(/\//g, '\\/')}/`);
+  c.forEach(e => r += `${e}/`);
   return r;
 }
 
@@ -662,7 +662,7 @@ function getCompositionLoop(port){
     case "func":
       let count = [];
       for(let i = comp.params.length - 1; i >= 0; i--){
-        let r = getCompositionParam(shape, comp.params[i]);
+        let r = getCompositionParam(shape, comp.params[i], false);
         if(r != null){
           count.push(i);
           res = res.concat(r);
@@ -674,12 +674,12 @@ function getCompositionLoop(port){
         `#${comp.params.length}`);
       break;
     case "const":
-      let r = getCompositionParam(shape, comp.const);
+      let r = getCompositionParam(shape, comp.const, comp.const.more);
       if(r == null){ r = []; }
       res = res.concat(r);
       break;
     case "comp":
-      let c = getCompositionParam(shape, comp.comp)
+      let c = getCompositionParam(shape, comp.comp, false);
       if(c == null){ c = []; }
       res.push("<");
       res = res.concat(c);
@@ -691,10 +691,10 @@ function getCompositionLoop(port){
   return res;
 }
 
-function getCompositionParam(shape, compElement){
+function getCompositionParam(shape, compElement, more){
   switch(compElement.type){
     case "constant":
-      return [compElement.value];
+      return [more != true ? compElement.value.replace(/\//g, '\\/') : compElement.value];
     case "inputPort":
       return getCompositionLoop(shape.inputPorts[compElement.value]);
     case "menuData":
@@ -702,7 +702,7 @@ function getCompositionParam(shape, compElement){
       compElement.value.forEach(e => {
         r += (typeof e === 'string' || e instanceof String) ? e : getMenuData(shape, e);
       });
-      return [r];
+      return [more != true ? r.replace(/\//g, '\\/') : r];
     default:
       throw new Error(`Invalid type ${compElement.type}`);
 

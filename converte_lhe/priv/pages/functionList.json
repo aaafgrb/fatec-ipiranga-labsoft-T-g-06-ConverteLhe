@@ -8,7 +8,7 @@
   , "outPorts": 
     [ { "subtitle": "", "label": "value", "comp": 
         { "type": "const"
-        , "const": { "type": "menuData", "value": [0] }
+        , "const": { "type": "menuData", "value": [0], "more": true}
         }
       }
     ]
