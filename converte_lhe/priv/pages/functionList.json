@@ -119,6 +119,40 @@
       ]
     }
 
+  , { "label": "degrees to radians"
+    , "color": "#4A90E2"
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "input"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$degreesToRadians"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "radians to degrees"
+    , "color": "#4A90E2"
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "input"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$radiasToDegrees"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
   , { "label": "concat"
     , "color": "#F25C54"    
     , "menu": []
@@ -258,6 +292,213 @@
         }
       ]
     }
+
+  , { "label": "sin"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$sin"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "asin"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$asin"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+
+  , { "label": "cos"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$cos"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "acos"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$acos"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "tan"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$tan"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "atan"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$atan"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "erf"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$erf"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "erfc"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$erfc"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "ceil"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$ceil"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "floor"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "value"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$floor"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "pow"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "base"}, {"subtitle": "number", "label": "exponent"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$pow"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            , { "type": "inputPort", "value": 1 }
+            ]
+          }
+        }
+      ]
+    }
+
+  , { "label": "exp"
+    , "color": "#F25C54"    
+    , "menu": []
+    , "inPorts": [{"subtitle": "number", "label": "exponent"}]
+    , "outPorts": 
+      [ {"subtitle": "number", "label": "output", 
+          "comp": 
+          { "type": "func"
+          , "func": "$exp"
+          , "params": 
+            [ { "type": "inputPort", "value": 0 }
+            ]
+          }
+        }
+      ]
+    }
+
 
   , { "label": "length"
     , "color": "#FF8C00"    

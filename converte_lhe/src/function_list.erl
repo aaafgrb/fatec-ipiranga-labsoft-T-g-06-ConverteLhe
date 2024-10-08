@@ -21,6 +21,9 @@ func("toFloat")  -> { 1, fun([F]) ->
 
 func("toString") -> { 1, fun([F]) -> lists:flatten(io_lib:format("~p",[F])) end};
 
+func("degreesToRadians") -> { 1, fun([F]) -> F * math:pi() / 180 end};
+func("radiansToDegrees") -> { 1, fun([F]) -> F * 180 / math:pi() end};
+
 func("sum")      -> { 2, fun([F, S]) -> F + S end };
 func("multiply") -> { 2, fun([F, S]) -> F * S end };
 func("divide")   -> { 2, fun([F, S]) -> F / S end };
@@ -28,6 +31,21 @@ func("sqrt")     -> { 1, fun([F]) -> math:sqrt(F) end };
 func("log")      -> { 1, fun([F]) -> math:log(F) end };
 func("log10")    -> { 1, fun([F]) -> math:log10(F) end };
 func("log2")     -> { 1, fun([F]) -> math:log2(F) end };
+func("sin")      -> { 1, fun([F]) -> math:sin(F) end };
+func("cos")      -> { 1, fun([F]) -> math:cos(F) end };
+func("tan")      -> { 1, fun([F]) -> math:tan(F) end };
+func("asin")     -> { 1, fun([F]) -> math:asin(F) end };
+func("acos")     -> { 1, fun([F]) -> math:acos(F) end };
+func("atan")     -> { 1, fun([F]) -> math:atan(F) end };
+
+func("erf")     -> { 1, fun([F]) -> math:erf(F) end };
+func("erfc")    -> { 1, fun([F]) -> math:erfc(F) end };
+
+func("floor")    -> { 1, fun([F]) -> math:floor(F) end };
+func("ceil")     -> { 1, fun([F]) -> math:ceil(F) end };
+
+func("pow")      -> { 2, fun([F, S]) -> math:pow(F, S) end };
+func("exp")      -> { 1, fun([F]) -> math:exp(F) end };
 
 func("clone")    -> { 2, fun([N, F]) -> lists:duplicate(N, F) end };
 
