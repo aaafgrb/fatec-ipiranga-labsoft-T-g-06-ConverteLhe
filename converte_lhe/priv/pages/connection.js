@@ -419,9 +419,12 @@ class NodeShape {
 // MENU
 //===========================================================================
 function showMenu(shape){
-  hideMenu();
+  if(menuHolder == shape){
+    hideMenu();
+    return;
+  }
+  
   if(shape.menuData.length == 0) return;
-  if(menuHolder == shape) return;
   
   shape.posElement.appendChild(menuPopupElement);
   clearMenu();
@@ -669,9 +672,10 @@ function getCompositionLoop(port){
         }
       }
       res.push(comp.func);
-      res.push(count.length != comp.params.length ?
+      let apply = count.length !=  comp.params.length ?
         `@${count.reverse().map(x => (x + 1),toString()).join('')}` :
-        `#${comp.params.length}`);
+        `#${comp.params.length}`
+      if(apply != "@") res.push(apply)
       break;
     case "const":
       let r = getCompositionParam(shape, comp.const, comp.const.more);
