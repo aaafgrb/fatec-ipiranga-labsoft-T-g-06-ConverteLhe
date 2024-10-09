@@ -1,0 +1,82 @@
+.compose-area{
+    display: grid;
+}
+.tarea{
+    grid-column: 1;
+    grid-row: 1;
+    flex-wrap: nowrap;
+}
+.trow{
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    min-height: 25px;
+}
+.trow-visual{
+    width: 4px;
+    height: 4px;
+    background-color: #edc2d4;
+    padding: 0;
+}
+.srow{
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    min-height: 25px;
+}
+.srow-input{
+    width: 4px;
+    height: 4px;
+    padding: 0;
+}
+.srow-output{
+    width: 4px;
+    height: 4px;
+    padding: 0;
+}
+.tcol{
+    flex-direction: column; 
+    display: flex;
+    min-width: 150px;
+}
+.crow{
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    min-height: 150px;
+}
+.scol{
+    flex-direction: column; 
+    display: flex;
+    min-width: 150px;
+    max-width: 150px;
+}
+.draggable-pile {
+    width: 130px;
+    height: 50px;
+    background-color: #2ecc71;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 1px 1px #000000;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+.draggable {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: #3498db;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    user-select: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
