@@ -7,6 +7,11 @@ if(cemail != ""){
   }
 }
 
+let urlParams = new URLSearchParams(document.location.search);
+let comp = urlParams.get("comp");
+
+loadComposition(comp);
+
 function newUser() {
   makeReq("newUser", 
     (json) => document.getElementById("feedbackLbl").innerHTML = "fetch result: " + json.value

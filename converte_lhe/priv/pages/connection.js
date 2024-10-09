@@ -119,6 +119,7 @@ class Connector {
   }
 
   placeHandle() {
+    if(!this.staticPort){ return; }
     const skipShape = this.staticPort.parentNode.element;
 
     let hitPort;
@@ -161,7 +162,7 @@ class Connector {
       hitPort.addConnector(this);
       this.updateHandle(hitPort);
 
-      this.inputPort.parentNode.onConnect(this);
+      this.inputPort.parentNode.onConnect(this); 
 
     } else {
       this.remove();
@@ -182,7 +183,7 @@ class Connector {
 
     this.path.removeAttribute("d");
     this.pathOutline.removeAttribute("d");
-    this.dragElement.removeAttribute("data-drag");
+    this.dragElement.removeAttribute("data-drag"); 
     this.staticElement.removeAttribute("data-drag");
 
     this.staticPort = null;
@@ -711,6 +712,10 @@ function getCompositionParam(shape, compElement, more){
       throw new Error(`Invalid type ${compElement.type}`);
 
   }
+}
+
+function loadComposition(composition){
+
 }
 
 //
