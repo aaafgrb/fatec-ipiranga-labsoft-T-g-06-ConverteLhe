@@ -12,20 +12,21 @@ start(_Type, _Args) ->
             {"/index.js", cowboy_static, {priv_file, converte_lhe, "/pages/index.js"}},
             {"/connection.js", cowboy_static, {priv_file, converte_lhe, "/pages/connection.js"}},
             {"/connection.css", cowboy_static, {priv_file, converte_lhe, "/pages/connection.css"}},
-            {"/grid.js", cowboy_static, {priv_file, converte_lhe, "/pages/grid.js"}},
             {"/grid.css", cowboy_static, {priv_file, converte_lhe, "/pages/grid.css"}},
             {"/user", cowboy_static, {priv_file, converte_lhe, "/pages/user.html"}},
             {"/user.js", cowboy_static, {priv_file, converte_lhe, "/pages/user.js"}},
             {"/confirmpass", cowboy_static, {priv_file, converte_lhe, "/pages/changePass.html"}},
             {"/changePass.js", cowboy_static, {priv_file, converte_lhe, "/pages/changePass.js"}},
-            {"/functionList.json", cowboy_static, {priv_file, converte_lhe, "/pages/functionList.json"}},
+            {"/Util.js", cowboy_static, {priv_file, converte_lhe, "/pages/Util.js"}},
+            {"/functionList.js", cowboy_static, {priv_file, converte_lhe, "/pages/functionList.js"}},
+            {"/components/[...]", cowboy_static, {priv_dir, converte_lhe, "/pages/components"}},
             {"/api", json_handler, []},
             {"/form", form_handler, []},
             {"/auseronn", user_handler, []}
         ]}
     ]),
     {ok, _} = cowboy:start_clear(http_listener,
-        [{port, 8080}],
+        [{port, 80}],
         #{env => #{dispatch => Dispatch}}
     ),
     converte_lhe_sup:start_link().

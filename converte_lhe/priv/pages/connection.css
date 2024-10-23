@@ -18,6 +18,10 @@ body {
   fill: #426D92;
 }
 .node-header .header-title {
+  user-select: none; 
+  -webkit-user-select: none; 
+  -moz-user-select: none; 
+  -ms-user-select: none; 
   font-size: 20px;
   fill: #fff;
   text-anchor: middle;
@@ -48,6 +52,10 @@ body {
 }
 
 .port-label {
+  user-select: none; 
+  -webkit-user-select: none; 
+  -moz-user-select: none; 
+  -ms-user-select: none; 
   font-size: 12px;
   fill: #fff;
 }
@@ -61,6 +69,10 @@ body {
 }
 
 .port-subtitle {
+  user-select: none; 
+  -webkit-user-select: none; 
+  -moz-user-select: none; 
+  -ms-user-select: none; 
   font-size: 10px;
   fill: #ccc;
 }
@@ -74,16 +86,19 @@ body {
 }
 
 .connector-handle {
+  pointer-events: none;
   fill: #E88802;
 }
 
 .connector-path {
+  pointer-events: none;
   stroke: #E88802;
   stroke-width: 4;
   fill: none;
 }
 
 .connector-path-outline {
+  pointer-events: none;
   stroke: #333;
   stroke-width: 6;
   fill: none;

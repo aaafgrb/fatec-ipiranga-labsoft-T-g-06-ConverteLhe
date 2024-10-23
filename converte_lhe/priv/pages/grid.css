@@ -67,6 +67,7 @@
     user-select: none; /* Standard syntax */
 }
 .draggable {
+    z-index: 3;
     position: absolute;
     width: 100px;
     height: 100px;
