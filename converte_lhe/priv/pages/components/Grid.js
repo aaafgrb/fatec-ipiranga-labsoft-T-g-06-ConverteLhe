@@ -48,7 +48,7 @@ export default {
   <div class="row tarea gx-0">
     <div class="col scol"><div class="row srow"><div class="srow-input" ref="inputRow"></div></div></div>
     <div class="col tcol" v-for="col in cols" ref="grid">
-      <div class="row" :class="row.process != null ? 'crow' : 'trow'" v-for="row in col.rows">
+      <div class="row" :class="row.processData != null ? 'crow' : 'trow'" v-for="row in col.rows">
         <div class="trow-visual">
 
         </div>

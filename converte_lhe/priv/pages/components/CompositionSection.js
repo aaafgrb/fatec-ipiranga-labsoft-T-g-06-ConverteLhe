@@ -3,8 +3,7 @@ import Grid from "./Grid.js"
 import NodeContainer from "./NodeContainer.js";
 import DraggedArrow from "./DraggedArrow.js";
 import Connector from "./Connector.js";
-import { getInputProcess, getOutputProcess } from "../functionList.js"
-import { getComposition } from '../functionList.js'
+import { getInputProcess, getOutputProcess, ProcessData, getComposition, getCompShare} from "../functionList.js"
 import DraggedConnector from "./DraggedConnector.js";
 
 export default {
@@ -17,50 +16,41 @@ export default {
     Connector
   },
   props: {
-    startCols: 
-    { type: Object
-    , default:
-      [ { rows: 
-          [ { process: null,
-              processData: {
-                identifier: null,
-                inPorts: [],
-                outPorts: [],
-                data: null
-              }
-            }
-          ]
-        }
-      ]
-    }
+    startCols: { 
+      type: Object, 
+      required:true 
+    },
+    startSpecialRows: { 
+      type: Object, 
+      required:true 
+    },
   },
   inject: ['currentArrowData', 'currentConnectorData', 'newIdentifier'],
-  expose: ['updatePositions', 'getComposition'],
+  expose: ['updatePositions', 'getComposition', 'getCompShare'],
   data: () => ({
     cols: [],
-    specialRows: {input: {process: null, processData: {identifier: null, inPorts: [], outPorts: [], data: null}}, 
-                  output: {process: null, processData: {identifier: null, inPorts: [], outPorts: [], data: null}}},
+    specialRows: {},
     processRows: new Map,
     nullProcessRows: []
   }),
   methods:{
     fixCols(){
-      const isColEmpty = (cid) => this.cols[cid].rows.length == 1 && this.cols[cid].rows[0].process == null;
-      const isRowEmpty = (cid, rid) => this.cols[cid].rows[rid].process == null;
-      const newEmpty = () => ({process: null, processData: {identifier: null, inPorts: [], outPorts: [], data: null}})
+      const isColEmpty = (cid) => (this.cols[cid].rows.length == 1 && this.cols[cid].rows[0].processData == null) || 
+                                  this.cols[cid].rows.length <= 0;
+      const isRowEmpty = (cid, rid) => this.cols[cid].rows[rid].processData == null;
       //cols
       for(let i = 0; i < this.cols.length; i++){
         if(!isColEmpty(i)){
           //left
-          if(i - 1 < 0 || !isColEmpty(i - 1)){ this.cols.splice(i++, 0, {rows: [newEmpty()]}); }
+          if(i - 1 < 0 || !isColEmpty(i - 1)){ this.cols.splice(i++, 0, {rows: [{processData: null}]}); }
           let rempty = false;
           //rows
           for(let ii = 0; ii < this.cols[i].rows.length; ii++){
             if(!isRowEmpty(i, ii)){
               //up
-              if(ii - 1 < 0 || !isRowEmpty(i, ii - 1)){ this.cols[i].rows.splice(ii++, 0 , newEmpty()); }
+              if(ii - 1 < 0 || !isRowEmpty(i, ii - 1)){ this.cols[i].rows.splice(ii++, 0 , {processData: null}); }
               //down
-              if(ii + 1 >= this.cols[i].rows.length || !isRowEmpty(i, ii + 1)){ this.cols[i].rows.splice(++ii, 0 , newEmpty()); }
+              if(ii + 1 >= this.cols[i].rows.length || !isRowEmpty(i, ii + 1)){ this.cols[i].rows.splice(++ii, 0 , {processData: null}); }
               rempty = false;
             }else{
               //check for repeated empty
@@ -71,7 +61,7 @@ export default {
             }
           }
           //right
-          if(i + 1 >= this.cols.length || !isColEmpty(i + 1)){ this.cols.splice(++i, 0, {rows: [newEmpty()]}); }
+          if(i + 1 >= this.cols.length || !isColEmpty(i + 1)){ this.cols.splice(++i, 0, {rows: [{processData: null}]}); }
         }
       }
       let cempty = false;
@@ -83,34 +73,29 @@ export default {
       }
     },
     onSnap(index){
-      this.nullProcessRows[index].process = this.currentArrowData.currentArrow;
-      this.nullProcessRows[index].processData.identifier = this.newIdentifier();
-      this.nullProcessRows[index].processData.inPorts = [];
-      this.nullProcessRows[index].processData.outPorts = [];
-      this.nullProcessRows[index].processData.data =  { ...this.nullProcessRows[index].process.data };
+      this.nullProcessRows[index].processData = 
+        new ProcessData(this.currentArrowData.currentArrow, this.newIdentifier(), [], null, 
+                        [ ...this.currentArrowData.currentArrow.data ])
       this.processRows.set(this.nullProcessRows[index].processData.identifier, this.nullProcessRows[index]);
       this.fixCols();
       Vue.nextTick(this.updatePositions)
     },
     onConnect(inIdentifier, inPortIndex, outIdentifier, outPortIndex){
-      let curr = this.processRows.get(inIdentifier).processData.inPorts[inPortIndex]
-      if(curr){
-        this.processRows.get(curr.identifier).processData.outPorts[curr.portIndex] = null
-      }
-      this.processRows.get(outIdentifier).processData.outPorts[outPortIndex] = { identifier: inIdentifier, portIndex: inPortIndex}
-      this.processRows.get(inIdentifier).processData.inPorts[inPortIndex] = { identifier: outIdentifier, portIndex: outPortIndex}
+      this.processRows.get(inIdentifier).processData.connectToInputPort(inPortIndex, this.processRows.get(outIdentifier).processData, outPortIndex)
     },
     onContextMenu(pdata){
       let id = pdata.processData.identifier;
-      if(id == this.specialRows.input.processData.identifier || id == this.specialRows.output.processData.identifier)
-        return;
-      this.processRows.get(id).processData.inPorts.forEach(x => {
-        if(x) this.processRows.get(x.identifier).processData.outPorts[x.portIndex] = null
+      //ignore if it is the input or output node
+      if(id == this.specialRows.input.processData.identifier || id == this.specialRows.output.processData.identifier) return;
+      //remove all input connections
+      pdata.processData.inPorts.forEach((x, i) => {
+        if(x) pdata.processData.removeFromInputPort(this.processRows.get(x.identifier).processData, i)
       })
-      this.processRows.get(id).processData.outPorts.forEach(x => {
-        if(x) this.processRows.get(x.identifier).processData.inPorts[x.portIndex] = null
+      //remove all output connections
+      pdata.processData.outPorts.forEach(x => {
+        x.forEach(y => { if(y) this.processRows.get(y.identifier).processData.removeFromInputPort(pdata.processData, y.portIndex)})
       })
-      this.processRows.get(id).process = null;
+      //remove from processRows
       this.processRows.get(id).processData = null;
       this.processRows.delete(id);
       this.fixCols();
@@ -128,8 +113,7 @@ export default {
       if(port.isInput && pdata.processData.inPorts[portIndex]){
         let o = this.processRows.get(pdata.processData.inPorts[portIndex].identifier)
         let i = pdata.processData.inPorts[portIndex].portIndex;
-        o.processData.outPorts[i] = null
-        this.processRows.get(pdata.processData.identifier).processData.inPorts[portIndex] = null
+        pdata.processData.removeFromInputPort(o.processData, portIndex)
         this.startDragging(o, o.nodeContainer.$refs.outPorts[i], i)
       }else{
         this.currentConnectorData.identifier = pdata.processData.identifier;
@@ -145,21 +129,31 @@ export default {
       let r = "";
       c.forEach(e => r += `${e}/`);
       return r
+    },
+    getCompShare(){
+      return getCompShare(this.specialRows.output, this.processRows);
     }
   },
   mounted(){
     this.cols = this.startCols
+    this.specialRows = this.startSpecialRows
     Vue.nextTick(() => {
       let s = this.$refs.grid.getspecialRowPoints();
-      this.specialRows.input = {process: getInputProcess(), point: s.input, processData: {identifier: this.newIdentifier(), inPorts: [], outPorts: [], data: null}}
-      this.specialRows.output = {process: getOutputProcess(), point: s.output, processData: {identifier: this.newIdentifier(), inPorts: [], outPorts: [], data: null}}
+      this.specialRows.output.point = s.output
+      this.specialRows.input.point = s.input
       this.processRows.set(this.specialRows.input.processData.identifier, this.specialRows.input);
       this.processRows.set(this.specialRows.output.processData.identifier, this.specialRows.output);
+      this.startCols.forEach(c => c.rows.forEach(r => {
+        if(r.processData) this.processRows.set(r.processData.identifier, r);
+      }))
+      this.fixCols()
     })
   },
   computed: {
     connectors(){
-      return Array.from(this.processRows).flatMap((x) => 
+      let r = Array.from(this.processRows)
+      .filter(x => x[1].nodeContainer)
+      .flatMap((x) => 
         x[1].processData.inPorts.filter(y => y).map(y => (
           { inIdentifier: x[1].processData.identifier, 
             inPortIndex: x[1].processData.inPorts.indexOf(y),
@@ -168,6 +162,7 @@ export default {
           })
         )
       )
+      return r
     },
   },
   watch: {
@@ -182,7 +177,8 @@ export default {
             @oncontextmenu="onContextMenu" @startdragging="startDragging"></node-container>
         </g>
         <g id="connections-layer">
-          <connector v-for="c in connectors" :inPort="processRows.get(c.inIdentifier).nodeContainer.inPorts[c.inPortIndex]" 
+          <connector v-for="c in connectors"
+            :inPort="processRows.get(c.inIdentifier).nodeContainer.inPorts[c.inPortIndex]" 
             :outPort="processRows.get(c.outIdentifier).nodeContainer.outPorts[c.outPortIndex]"></connector>
           <dragged-connector v-if="currentConnectorData.isDragging" ref="draggedConnector" :processRows="processRows" @onconnect="onConnect"></dragged-connector>
         </g>

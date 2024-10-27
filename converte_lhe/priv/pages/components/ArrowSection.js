@@ -8,7 +8,7 @@ export default {
   emits: ['onstartdrag'],
   data: () => ({
     pileList: getArrowList(),
-    startDrag(pile){
+    startDrag(k, pile){
       this.$emit('onstartdrag', pile);
     },
   }),
@@ -17,9 +17,9 @@ export default {
   template: `
   <div class="row arrow-section justify-content-center" id="arrow-section">
     <div class="draggable-pile col col-3 m-2" 
-      v-for="pile in pileList"
+      v-for="[k, pile] in pileList"
       :style="{backgroundColor: pile.color}"
-      @mousedown="startDrag(pile)"
+      @mousedown="startDrag(k, pile)"
     >{{pile.label}}</div>
   </div>
   `
