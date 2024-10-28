@@ -41,7 +41,7 @@ export default {
       return 50 + id * gap;
     },
     onMouseDown(event){
-      if(event.button == 1) { window.open() }
+      if(event.button == 1) { window.open(`./docs.html#${this.pdata.processData.process.identifier}`) }
       if(event.button != 0) { return }
       if(this.currentMenuData.isOpen){
         this.currentMenuData.isOpen = false;
