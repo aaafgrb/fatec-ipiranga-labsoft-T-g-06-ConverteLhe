@@ -7,8 +7,9 @@ export function throttle(f, delay) {
 }
 
 export function isCollidingRect(element1, element2) {
-  const rect1 = element1.getBoundingClientRect();
-  const rect2 = element2.getBoundingClientRect();
+  if(!element1 || !element2) return
+  let rect1 = element1.getBoundingClientRect();
+  let rect2 = element2.getBoundingClientRect();
 
   return !(
     rect1.right < rect2.left ||

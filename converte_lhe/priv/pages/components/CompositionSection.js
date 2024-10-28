@@ -73,6 +73,7 @@ export default {
       }
     },
     onSnap(index){
+      //adds dragged process to the processRows
       this.nullProcessRows[index].processData = 
         new ProcessData(this.currentArrowData.currentArrow, this.newIdentifier(), [], null, 
                         [ ...this.currentArrowData.currentArrow.data ])
@@ -84,6 +85,7 @@ export default {
       this.processRows.get(inIdentifier).processData.connectToInputPort(inPortIndex, this.processRows.get(outIdentifier).processData, outPortIndex)
     },
     onContextMenu(pdata){
+      //remove process from composition
       let id = pdata.processData.identifier;
       //ignore if it is the input or output node
       if(id == this.specialRows.input.processData.identifier || id == this.specialRows.output.processData.identifier) return;

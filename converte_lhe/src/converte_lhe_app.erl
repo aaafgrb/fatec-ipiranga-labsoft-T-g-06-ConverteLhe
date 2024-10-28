@@ -20,6 +20,7 @@ start(_Type, _Args) ->
             {"/Util.js", cowboy_static, {priv_file, converte_lhe, "/pages/Util.js"}},
             {"/functionList.js", cowboy_static, {priv_file, converte_lhe, "/pages/functionList.js"}},
             {"/components/[...]", cowboy_static, {priv_dir, converte_lhe, "/pages/components"}},
+            {"/favicon/[...]", cowboy_static, {priv_dir, converte_lhe, "/pages/favicon"}},
             {"/api", json_handler, []},
             {"/form", form_handler, []},
             {"/auseronn", user_handler, []}
