@@ -55,7 +55,7 @@ export default {
       });
     },
     userButton(){
-      location.href="./user.html"
+      location.href="./user"
     },
     shareButton(){
       navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?comp=" + encodeURIComponent(this.getCompShare()));
