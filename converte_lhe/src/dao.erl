@@ -25,11 +25,11 @@ register_user(Email) ->
     end,
 
     % sends the email
-    Body = "confirm Convertelhe registration: " ++ ets:lookup_element(conf_table, dns_url, 2) ++ "confirmpass?k=" ++ F,
+    Body = "Set Convertelhe password: " ++ ets:lookup_element(conf_table, dns_url, 2) ++ "confirmpass?k=" ++ F,
     gen_smtp_client:send(
         { Sender
         , [Email]
-        , "Subject: Confirm registration\r\nFrom: ConverteLhe <" ++ Sender ++ 
+        , "Subject: Set Password\r\nFrom: ConverteLhe <" ++ Sender ++ 
             ">\r\nTo: user <" ++ Email ++ ">\r\n\r\n" ++ Body
         },
         [ {relay, ets:lookup_element(conf_table, smtp_relay, 2)}
