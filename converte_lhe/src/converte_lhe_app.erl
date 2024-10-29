@@ -18,6 +18,8 @@ start(_Type, _Args) ->
             {"/confirmpass", cowboy_static, {priv_file, converte_lhe, "/pages/changePass.html"}},
             {"/changePass.js", cowboy_static, {priv_file, converte_lhe, "/pages/changePass.js"}},
             {"/Util.js", cowboy_static, {priv_file, converte_lhe, "/pages/Util.js"}},
+            {"/docs", cowboy_static, {priv_file, converte_lhe, "/pages/docs.html"}},
+            {"/docs.js", cowboy_static, {priv_file, converte_lhe, "/pages/docs.js"}},
             {"/functionList.js", cowboy_static, {priv_file, converte_lhe, "/pages/functionList.js"}},
             {"/components/[...]", cowboy_static, {priv_dir, converte_lhe, "/pages/components"}},
             {"/favicon/[...]", cowboy_static, {priv_dir, converte_lhe, "/pages/favicon"}},
