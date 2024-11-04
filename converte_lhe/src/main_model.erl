@@ -47,7 +47,7 @@ handle_exception(E) -> case E of
         <<"too many arugments applied to function: ", (list_to_binary(lists:flatten(io_lib:format("~p",[V]))))/binary>>;
     {exception_non_closing_composition}       -> <<"non closing composition">>;
     {exception_empty_composition}             -> <<"empty composition">>;
-    {exception_not_enough_limit}              -> <<"not enough remaining limit, try again later">>;
+    {exception_not_enough_limit}              -> <<"not enough remaining limit, check if your apikey is correct and/or try again later">>;
         
     {exception_negative_arity, _V}            -> <<"internal error: negative arity">>;
     {exception_not_integer, _V}               -> <<"internal error: not an integer">>;

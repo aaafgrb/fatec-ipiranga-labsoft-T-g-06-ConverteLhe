@@ -38,16 +38,15 @@ export default {
       var separateLines = inData.value.split(/\r?\n|\r|\n/g);
       return fetch("./api?comp=" + encodeURIComponent(this.getComp()), {
         method: 'POST',
-        body: JSON.stringify({ processThis: separateLines })
+        body: JSON.stringify({ processThis: separateLines, apiKey: this.$refs.apikeyTxt.value })
       });
     },
     fileRequest(){
       const form = this.$refs.inForm;
       const formData  = new FormData(form);
         
-      //todo: insert composition data here
-      //formData.append("test", "dataT");
       formData.append("comp", this.getComp())
+      formData.append("apiKey", this.$refs.apikeyTxt.value)
 
       return fetch("./form", {
         method: 'POST',
