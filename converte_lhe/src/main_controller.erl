@@ -7,8 +7,8 @@ main(Req0, State, UnpackFun) ->
     
     Content = 
         try
-            {Data, Comp} = try UnpackFun(Req0) catch _:_ -> throw({exception_read_request}) end,
-            main_model:main(Data, Comp)
+            Data = try UnpackFun(Req0) catch _:_ -> throw({exception_read_request}) end,
+            main_model:main(Data)
         of
             {true, Res}  -> #{<<"result">> => Res, <<"error">> => <<"">>};
             {false, Err} -> #{<<"result">> => <<"">>, <<"error">> => Err};

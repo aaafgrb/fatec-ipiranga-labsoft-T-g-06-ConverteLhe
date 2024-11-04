@@ -1,6 +1,6 @@
 -module(dao).
 
--export([register_user/1, register_password/2, get_user_data/2]).
+-export([register_user/1, register_password/2, get_user_data/2, get_user_remaining_limit/1, spend_usage/1]).
 
 % todo: 
 %   find a safer (and/or prettier) way to concat the email string
@@ -62,6 +62,31 @@ get_user_data(Email, Pass) ->
         [34|V] -> lists:droplast(V);
         V -> V
     end.
+
+% receives the limit - current usage of the user
+get_user_remaining_limit(Key) ->
+    Url = ets:lookup_element(conf_table, db_url, 2),
+    Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
+    Content = "{\"k\": \"" ++ Key ++ "\"}",
+
+    try   R = send_request(Url ++ "rpc/getRemUsage", Headers, "application/json", Content), 
+          list_to_integer(R)
+    of    V -> V
+    catch _:_ -> 0
+    end.
+
+% spend usage (only using 1 for now, idenpendent of the composition complexity, or if it will fail)
+spend_usage(Key) -> 
+    Url = ets:lookup_element(conf_table, db_url, 2),
+    Headers = ets:lookup_element(conf_table, db_auth_headers, 2),
+    Content = "{\"k\": \"" ++ Key ++ "\"}",
+
+    try   send_request(Url ++ "rpc/useRemUsage", Headers, "application/json", Content)
+    of    "true" -> true
+    catch _:_ -> false
+    end.
+    
+
 %--------------------------------------------------------------------------------
 
 send_request(Url, Headers, ContentType, Content) -> 
