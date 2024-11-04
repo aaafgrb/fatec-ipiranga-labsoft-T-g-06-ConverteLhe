@@ -7,7 +7,6 @@
 main({DataList, CompStr, ApiKey}) -> 
     try
         spend_usage(ApiKey),
-        dao:get_user_remaining_limit(ApiKey),
         CompositionFun = arrow:resolve_composition(arrow:parse_composition(CompStr)),
         Result = lists:map(CompositionFun, DataList),
         Result
