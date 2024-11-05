@@ -1,17 +1,28 @@
 async function changePass(){
   const pass = document.getElementById("passTxt");
-
-  //todo: make password checking
-
+  const confirm = document.getElementById("confirmTxt");
   const feedback = document.getElementById("feedbackLbl")
 
   let params = new URLSearchParams(document.location.search);
   let key = params.get("k");
 
   if(key == null){
-      feedback.innerHTML = "password change failed: invalid reset key";
-      return;
+    feedback.innerHTML = "error: invalid reset key";
+    return;
   }
+
+
+  if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{8,}$/.test(pass.value)){
+    feedback.innerHTML = "error: password not strong enough | required: 1 uppercase letter; 1 lowercase letter; 1 digit; 8 characters long";
+  }else{
+    feedback.innerHTML = ""
+  }
+
+  if(pass.value != confirm.value){
+    feedback.innerHTML = "error: passwords aren't equal!"
+    return;
+  }
+
 
   const obj = {
       req: "changePass",
