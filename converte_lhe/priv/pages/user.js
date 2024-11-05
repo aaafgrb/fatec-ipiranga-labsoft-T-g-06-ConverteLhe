@@ -4,13 +4,9 @@ if(cemail != ""){
   if(ckey != ""){
     document.getElementById("emailTxt").value = cemail;
     document.getElementById("apikeyTxt").value = ckey;
+    getRemLimit();
   }
 }
-
-let urlParams = new URLSearchParams(document.location.search);
-let comp = urlParams.get("comp");
-
-loadComposition(comp);
 
 function newUser() {
   makeReq("newUser", 
@@ -23,9 +19,9 @@ function login() {
   makeReq("login", 
     (json) => { 
       document.getElementById("apikeyTxt").value = json.value; 
-      document.getElementById("limiteTxt").value = "unimplemented"; 
       document.cookie = "convertelhekey=" + json.value;
       document.cookie = "convertelheemail=" + email;
+      getRemLimit();
     }
   );
 }
@@ -36,15 +32,23 @@ function forgotPass() {
   );
 }
 
+function getRemLimit(){
+  makeReq("getLimit", 
+    (json) => {console.log(json.value); document.getElementById("limiteTxt").value = json.value}
+  );
+}
+
 async function makeReq(req, callback){
   const email = document.getElementById("emailTxt");
   const pass = document.getElementById("passTxt");
+  const key = document.getElementById("apikeyTxt")
   
   const feedback = document.getElementById("feedbackLbl")
 
   const obj = {
       req: req,
       email: email.value,
+      key: key.value,
       pass: await digestMessage(await digestMessage(pass.value) + email.value),
   };
   
@@ -60,6 +64,7 @@ async function makeReq(req, callback){
     callback(await res.json());
   })
 }
+
 
 //---------------------------------------------------------------------
 
