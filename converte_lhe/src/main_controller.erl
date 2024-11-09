@@ -12,10 +12,10 @@ main(Req0, State, UnpackFun) ->
         of
             {true, Res}  -> #{<<"result">> => Res, <<"error">> => <<"">>};
             {false, Err} -> #{<<"result">> => <<"">>, <<"error">> => Err};
-            E            -> erlang:display(E), #{<<"result">> => <<"">>, <<"error">> => <<"unexpected error">>}
+            _            -> #{<<"result">> => <<"">>, <<"error">> => <<"unexpected error">>}
         catch
             {exception_read_request} -> #{<<"result">> => <<"">>, <<"error">> => <<"wasn't able to read the request, please check the documentation">>};
-            _:E -> erlang:display(E), #{<<"result">> => <<"">>, <<"error">> => <<"unexpected error">>}
+            _:_ -> #{<<"result">> => <<"">>, <<"error">> => <<"unexpected error">>}
         end,
     Req = cowboy_req:reply(200, #{<<"content-type">> => <<"application/json">>}, jsx:encode(Content), Req0),
     {ok, Req, State}.
