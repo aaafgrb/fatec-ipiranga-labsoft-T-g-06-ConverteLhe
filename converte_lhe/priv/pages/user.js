@@ -34,7 +34,7 @@ function forgotPass() {
 
 function getRemLimit(){
   makeReq("getLimit", 
-    (json) => {console.log(json.value); document.getElementById("limiteTxt").value = json.value}
+    (json) => {document.getElementById("limiteTxt").value = json.value}
   );
 }
 

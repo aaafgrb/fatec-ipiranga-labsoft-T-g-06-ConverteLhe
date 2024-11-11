@@ -113,7 +113,8 @@ Vue.createApp({
       objects.map(x => {
         x.nodeId = parseInt(x.nodeId);
         x.processId = parseInt(x.processId);
-        x.processParams = x.processParams == '' ? [] : x.processParams.split(/(?<!\\),/);
+        x.processParams = x.processParams == '' ? [] : x.processParams.split(/(?<!\\),/).map(y => y.replace(/\\([,\\\/|:])/g, '$1'));
+        console.log(x.processParams)
         x.connections = x.connections == '' ? [] : x.connections.split(/(?<!\\),/).map(xx => xx.split(/(?<!\\):/))
           .map(xx => ({identifier: parseInt(xx[0]), portIndex: parseInt(xx[1])}));
       })
