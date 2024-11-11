@@ -5,15 +5,26 @@
 %% receives a list with the input data and the composition as a string
 %% returns an Either like tuple: {bool, result or error}
 main({DataList, CompStr, ApiKey}) -> 
-    try
-        spend_usage(ApiKey),
-        CompositionFun = arrow:resolve_composition(arrow:parse_composition(CompStr)),
-        Result = lists:map(CompositionFun, DataList),
-        Result
-    of
-        Res -> {true, [handle_result(X) || X <- Res]}
-    catch
-        _:E -> {false, handle_exception(E)}
+    try   spend_usage(ApiKey)
+    catch _:E -> {false, handle_exception(E)}
+    end,
+    
+    CallerPid = self(),
+
+    Pid = spawn_link(fun() -> 
+        try
+            CompositionFun = arrow:resolve_composition(arrow:parse_composition(CompStr)),
+            lists:map(CompositionFun, DataList)
+        of R -> CallerPid ! {ok, R}
+        catch _:M -> CallerPid ! {handled, handle_exception(M)}
+        end
+    end),
+    
+    receive
+        {ok, Res}    -> {true, [handle_result(X) || X <- Res]};
+        {handled, H} -> {false, H};
+        _            -> {false, handle_exception(unexpected)}
+    after 5000 ->  exit(Pid, kill), {false, <<"error: timeout - execution took too long">>}
     end.
 
 
