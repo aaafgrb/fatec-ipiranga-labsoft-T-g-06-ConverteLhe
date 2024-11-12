@@ -132,6 +132,15 @@ const processList = new Map([
     [],
     "Receives a composition and returns a function that runs the composition. Beware that its not possible to use the outer context input (the main input) on the composition, it is necessary to pass it as an parameter"
   )],
+  [40, new Process(40,
+    "apply", "#B372CA", 
+    [ { subtitle: "", label: "function"}, { subtitle: "", label: "parameter"} ], 
+    [ { subtitle: "", label: "output", 
+      getComp: (pdata, pmap) => [...getComposition(pdata.inPorts[1], pmap), ...getComposition(pdata.inPorts[0], pmap), `@${pdata.data[0]}`] } ],
+    [ { label: "input index", type: "txtbox" } ],
+    ["1"],
+    "Has a menu that receives an integer that represents the index (1 based) that the 'parameter' will be applied to, on the 'function'"
+  )],
   [6, new Process(6,
     "to integer", "#4A90E2", 
     [ { subtitle: "string", label: "input"} ], 

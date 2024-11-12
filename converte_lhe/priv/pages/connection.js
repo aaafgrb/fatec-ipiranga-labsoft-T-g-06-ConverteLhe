@@ -96,7 +96,9 @@ Vue.createApp({
       this.$refs.comp.updatePositions();
     },
     getComposition(){
-      return this.$refs.comp.getComposition()
+      let r = this.$refs.comp.getComposition()
+      console.log(`generated composition: ${r}`)
+      return r
     },
     getCompShare(){
       return this.$refs.comp.getCompShare()
@@ -114,7 +116,7 @@ Vue.createApp({
         x.nodeId = parseInt(x.nodeId);
         x.processId = parseInt(x.processId);
         x.processParams = x.processParams == '' ? [] : x.processParams.split(/(?<!\\),/).map(y => y.replace(/\\([,\\\/|:])/g, '$1'));
-        console.log(x.processParams)
+        
         x.connections = x.connections == '' ? [] : x.connections.split(/(?<!\\),/).map(xx => xx.split(/(?<!\\):/))
           .map(xx => ({identifier: parseInt(xx[0]), portIndex: parseInt(xx[1])}));
       })

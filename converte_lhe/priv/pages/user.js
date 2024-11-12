@@ -16,6 +16,7 @@ function newUser() {
 
 function logout() {
   deleteAllCookies();
+  window.location.reload();
 }
 
 function login() {
