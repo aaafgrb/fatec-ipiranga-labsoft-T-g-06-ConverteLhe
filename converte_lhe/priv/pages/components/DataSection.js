@@ -35,10 +35,10 @@ export default {
     },
     nonFileRequest(){
       const inData = this.$refs.inTxtBox;
-      var separateLines = inData.value.split(/\r?\n|\r|\n/g);
+      let data = this.$refs.inputTypeDropdown.value == 0 ? inData.value.split(/\r?\n|\r|\n/g) : [inData.value]
       return fetch("./api?comp=" + encodeURIComponent(this.getComp()), {
         method: 'POST',
-        body: JSON.stringify({ processThis: separateLines, apiKey: this.$refs.apikeyTxt.value })
+        body: JSON.stringify({ processThis: data, apiKey: this.$refs.apikeyTxt.value })
       });
     },
     fileRequest(){
@@ -47,6 +47,7 @@ export default {
         
       formData.append("comp", this.getComp())
       formData.append("apiKey", this.$refs.apikeyTxt.value)
+      formData.append("oneString", this.$refs.inputTypeDropdown.value == 1)
 
       return fetch("./form", {
         method: 'POST',
@@ -84,11 +85,17 @@ export default {
       </button>
     </div>
   </form>
-  in
+  <div class="row justify-content-center m-1 pt-2">
+    <select name="inputTypeDropdown" id="inputTypeDropdown" ref="inputTypeDropdown">
+      <option value="0">each line as a value</option>
+      <option value="1">entire text as one value</option>
+    </select>
+  </div>
+  input
   <div class="input-group">
     <textarea class="form-control" style="overflow-wrap: normal; overflow-x: scroll;" id="inTxtBox" name="inTxtBox" ref="inTxtBox"></textarea>
   </div>
-  out
+  output
   <div class="input-group">
     <textarea class="form-control" style="overflow-wrap: normal; overflow-x: scroll;" readonly id="outTxtBox" name="outTxtBox" ref="outTxtBox"></textarea>
   </div>

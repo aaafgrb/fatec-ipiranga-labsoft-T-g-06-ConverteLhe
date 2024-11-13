@@ -9,7 +9,6 @@ start(_Type, _Args) ->
     Dispatch = cowboy_router:compile([
 	{'_', [
             {"/", cowboy_static, {priv_file, converte_lhe, "/pages/index.html"}},
-            {"/index.js", cowboy_static, {priv_file, converte_lhe, "/pages/index.js"}},
             {"/connection.js", cowboy_static, {priv_file, converte_lhe, "/pages/connection.js"}},
             {"/connection.css", cowboy_static, {priv_file, converte_lhe, "/pages/connection.css"}},
             {"/grid.css", cowboy_static, {priv_file, converte_lhe, "/pages/grid.css"}},

@@ -86,9 +86,20 @@ class Process{
   }
 }
 
-const outputProcess = new Process(0, "output", "#B372CA", [{subtitle: "value", label: "output"}], [], [], [],
+const outputProcess = new Process(0, 
+  "output", "#B372CA", 
+  [{subtitle: "value", label: "output"}], 
+  [], 
+  [], 
+  [],
   "The output process. The values return after passing by a format function and because of the way that erlang (the server backend language) handles strings, if the retun value is an array of integers and their values are within the range of the printable ascii, it might be interpreted as an string instead of an array. And if the character binary is outsite the printable ascii (like in unicode) it might be interpreted as an array of integers")
-const inputProcess = new Process(1, "input", "#B372CA", [], [{subtitle: "string", label: "input", getComp: (pdata, pmap) => "x1"}], [], [], 
+
+  const inputProcess = new Process(1, 
+  "input", "#B372CA", 
+  [], 
+  [{subtitle: "string", label: "input", getComp: (pdata, pmap) => "x1"}], 
+  [], 
+  [], 
   "The input process. Is the input of the composition and always a string. Its equivalent to the placable input process with the parameter '1' (i.e. its equivalent to the first (and only) parameter of the composition)")
 
 const processList = new Map([
