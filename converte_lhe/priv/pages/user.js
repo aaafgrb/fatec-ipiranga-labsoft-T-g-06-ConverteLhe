@@ -14,6 +14,11 @@ function newUser() {
   );
 }
 
+function apikeyCopy(){
+  navigator.clipboard.writeText(document.getElementById("apikeyTxt").value);
+  window.alert("apikey copied to clipboard")
+}
+
 function logout() {
   deleteAllCookies();
   window.location.reload();
