@@ -37,11 +37,17 @@ spend_usage(ApiKey) ->
              end
     end.
 
-%converts the result a string then to binary
-handle_result(X) -> case io_lib:printable_list(X) of
-        true  -> erlang:list_to_binary(lists:flatten(io_lib:format("~s",[X])));
-        false -> erlang:list_to_binary(lists:flatten(io_lib:format("~w",[X])))
-    end.
+handle_result(X) -> handle_result_arr([X]).
+
+handle_result_arr([])             -> <<"">>;
+handle_result_arr([Value])        -> <<(handle_result_ele(Value))/binary>>;
+handle_result_arr([Value | Tail]) -> <<(handle_result_ele(Value))/binary, "," , (handle_result_arr(Tail))/binary>>;
+handle_result_arr(Value)          -> handle_result_ele(Value).
+
+handle_result_ele(Value) when is_binary(Value) -> Value;
+handle_result_ele([])                          -> <<"[]">>;
+handle_result_ele(Value) when is_list(Value)   -> <<"[", (handle_result_arr(Value))/binary, "]">>;
+handle_result_ele(Value) -> <<(list_to_binary(io_lib:format("~w", [Value])))/binary>>.
 
 % returns the response based on received exception
 handle_exception(E) -> case E of
@@ -49,13 +55,14 @@ handle_exception(E) -> case E of
     {exception_unsupported_function, F}         -> <<"unsupported function: ", (list_to_binary(F))/binary>>;
     {exception_convert_float, V}                -> <<"failed convertion to float: ", (list_to_binary(V))/binary>>;
     {exception_convert_integer, V}              -> <<"failed convertion to integer: ", (list_to_binary(V))/binary>>;
+    {exception_convert_string, V}               -> <<"failed convertion to string: ", (list_to_binary(V))/binary>>;
     {exception_inexistent_variable_position, V} -> 
-        <<"inexistent variable position: ", (list_to_binary(lists:flatten(io_lib:format("~p",[V]))))/binary>>;
+        <<"inexistent variable position: ", (list_to_binary(lists:flatten(io_lib:format("~w",[V]))))/binary>>;
     {exception_bad_argument, V} -> 
-        <<"failed function application to arguments: ", (list_to_binary(lists:flatten(io_lib:format("~p",[V]))))/binary>>;
+        <<"failed function application to arguments: ", (list_to_binary(lists:flatten(io_lib:format("~w",[V]))))/binary>>;
     {exception_not_enough_values_on_stack}      -> <<"not enough values on the stack">>;
     {exception_too_many_arguments, V} -> 
-        <<"too many arugments applied to function: ", (list_to_binary(lists:flatten(io_lib:format("~p",[V]))))/binary>>;
+        <<"too many arugments applied to function: ", (list_to_binary(lists:flatten(io_lib:format("~w",[V]))))/binary>>;
     {exception_non_closing_composition}       -> <<"non closing composition">>;
     {exception_empty_composition}             -> <<"empty composition">>;
     {exception_not_enough_limit}              -> <<"not enough remaining limit, check if your apikey is correct and/or try again later">>;

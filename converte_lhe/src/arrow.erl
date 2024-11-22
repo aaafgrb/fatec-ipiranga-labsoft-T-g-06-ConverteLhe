@@ -35,7 +35,9 @@ prefix_to_type(T) -> throw({exception_unsupported_prefix, [T]}).
 
 % converts a value string to the corresponding atom value
 convert_to_type(function, Value)   -> Value;
-convert_to_type(string, Value)     -> Value;
+convert_to_type(string, Value)     -> try list_to_binary(Value)
+                                      catch error:_ -> throw({throw({exception_convert_string, Value}), Value})
+                                      end;
 convert_to_type(comp_start, Value) -> Value; % the value isnt used for anything currently
 convert_to_type(comp_end, Value)   -> Value; % the value isnt used for anything currently
 convert_to_type(variable, Value)   ->  try   string:to_integer(Value) 

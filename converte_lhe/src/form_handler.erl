@@ -16,7 +16,7 @@ unpack_fun(Req0) ->
     {_, ApiKey} = lists:keyfind("apiKey", 1, FormData),
     {_, OneString} = lists:keyfind("oneString", 1, FormData),
     Lines = case OneString of
-        <<"true">> -> [binary_to_list(Data)];
-        _          -> re:split(binary_to_list(Data), LineSplitterRegex, [{return, list}])
+        <<"true">> -> [Data];
+        _          -> re:split(Data, LineSplitterRegex, [{return, list}])
     end,
     {[[X]||X <- Lines], binary_to_list(Comp), binary_to_list(ApiKey)}.
