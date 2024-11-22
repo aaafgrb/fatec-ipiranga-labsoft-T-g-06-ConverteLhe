@@ -97,16 +97,31 @@ Vue.createApp({
     </li>
   </ul>
   <hr style="color: white;">
-  <div v-for="[k, p] in processList">
-    <div class="container mt-4">
-      <div class="row">
-        <div :style="\`border: 1px solid #000000; border-radius: 15px; background-color: \${p.color} \`">
-          <h4 :id="p.identifier" style="color: white">{{p.label}}</h4>
-          <p class="text-left" style="color: white">{{p.doc}}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <table>
+    <tbody>
+      <tr v-for="[k, p] in processList">
+        <td :id="p.identifier">
+          <div class="docs-title-type" :style="\`background-color: color-mix(in hsl, \${p.color}, #FFFFFF 0%);\`">
+              <div class="docs-title">{{p.label}}</div>
+              <div class="docs-type">{{p.type}}</div>
+          </div>
+          <div class="docs-description-cell" :style="\`background-color: color-mix(in hsl, \${p.color}, #FFFFFF 10%);\`">
+              <b>description:</b> {{p.doc.desc}}
+          </div>
+          <div class="docs-menu" :style="\`background-color: color-mix(in hsl, \${p.color}, #FFFFFF 18%);\`">
+              <b>menu:</b> {{p.doc.menu}}
+          </div>
+          <div class="docs-example" :style="\`background-color: color-mix(in hsl, \${p.color}, #FFFFFF 18%);\`">
+              <b>example:</b> {{p.doc.example}}
+          </div>
+          <div class="docs-comp" :style="\`background-color: color-mix(in hsl, \${p.color}, #FFFFFF 18%);\`">
+              <b>composition:</b> {{p.doc.comp}}
+          </div>
+        </td>
+      </tr>
+      
+    </tbody>
+  </table>
   `
 }).mount('#app')
 
