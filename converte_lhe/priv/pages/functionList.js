@@ -81,7 +81,7 @@ const processTypesColors = new Map([
   ["conversion", "#4A90E2"],
   ["number", "#F25C54"],
   ["list", "#FF8C00"],
-  ["function", "#41bf63"],
+  ["function", "#d1459e"],
   ["string", "#2dc47b"],
 ])
 
@@ -287,8 +287,8 @@ const processList = new Map([
   )],
   [44, new Process(44,
     "concat", "string", 
-    [ { subtitle: "", label: "list"}, { subtitle: "", label: "list"}], 
-    [ { subtitle: "", label: "list", 
+    [ { subtitle: "", label: "string"}, { subtitle: "", label: "string"}], 
+    [ { subtitle: "", label: "string", 
       getComp: (pdata, pmap) => applyFunc("$concat", [getComposition(pdata.inPorts[0], pmap), getComposition(pdata.inPorts[1], pmap)]) } ],
     [],
     [],

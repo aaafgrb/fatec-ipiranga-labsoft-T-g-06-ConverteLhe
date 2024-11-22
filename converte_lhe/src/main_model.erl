@@ -6,9 +6,11 @@
 %% returns an Either like tuple: {bool, result or error}
 main({DataList, CompStr, ApiKey}) -> 
     try   spend_usage(ApiKey)
+    of    ok  -> run_composition({DataList, CompStr})
     catch _:E -> {false, handle_exception(E)}
-    end,
+    end.
     
+run_composition({DataList, CompStr}) ->
     CallerPid = self(),
 
     Pid = spawn_link(fun() -> 

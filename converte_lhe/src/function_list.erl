@@ -82,7 +82,7 @@ func("map")      -> { 2, fun([F, S])     -> lists:map(fun(E) -> F([E]) end, S) e
 
 % strings
 
-func("split")    -> { 2, fun([S, D]) -> binary:split(S, [D]) end };
+func("split")    -> { 2, fun([S, D]) -> binary:split(S, [D], [global]) end };
 func("concat")   -> { 2, fun([F, S]) -> <<F/binary, S/binary>> end };
 
 
