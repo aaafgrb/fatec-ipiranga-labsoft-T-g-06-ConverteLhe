@@ -84,6 +84,8 @@ func("map")      -> { 2, fun([F, S])     -> lists:map(fun(E) -> F([E]) end, S) e
 
 func("split")    -> { 2, fun([S, D]) -> binary:split(S, [D], [global]) end };
 func("concat")   -> { 2, fun([F, S]) -> <<F/binary, S/binary>> end };
+func("replace")  -> { 3, fun([S, M, R]) -> binary:replace(S, [M], R, [global]) end };
+
 
 
 func(F) -> throw({exception_unsupported_function, F}).

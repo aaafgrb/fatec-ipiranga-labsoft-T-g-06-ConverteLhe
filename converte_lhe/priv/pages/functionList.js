@@ -159,6 +159,7 @@ const processList = new Map([
       comp: "{s or f or i depending on menu type}{menu value}",
     }
   )],
+  //-----------------------COMPOSITION------------------------------------------
   [4, new Process(4,
     "input", "composition", 
     [], 
@@ -201,6 +202,7 @@ const processList = new Map([
       comp: "{input 2}/{input 1}/@{menu input index}",
     }
   )],
+  //-----------------------CONVERSION------------------------------------------
   [6, new Process(6,
     "to integer", "conversion", 
     [ { subtitle: "string", label: "input"} ], 
@@ -271,6 +273,7 @@ const processList = new Map([
       comp: "{input 1}/$radiansToDegrees",
     }
   )],
+  //-----------------------STRING------------------------------------------
   [41, new Process(41,
     "split", "string", 
     [ { subtitle: "", label: "string"}, { subtitle: "string", label: "delimiter"} ], 
@@ -299,6 +302,21 @@ const processList = new Map([
       comp: "{input 2}/{input 1}/$concat",
     }
   )],
+  [46, new Process(46,
+    "replace", "string", 
+    [ { subtitle: "string", label: "subject"}, { subtitle: "string", label: "replacement"}], 
+    [ { subtitle: "", label: "string", 
+      getComp: (pdata, pmap) => applyFunc("$replace", [getComposition(pdata.inPorts[0], pmap), `s${pdata.data[0]}`, getComposition(pdata.inPorts[1], pmap)]) } ],
+    [ { label: "match", type: "txtbox" } ],
+    ["$"],
+    {
+      desc: "replaces a pattern on a string",
+      menu: "Match (string)",
+      example: "menu: \"$\" | input: \"{a$bc$, 123}\" | output: \"a123bc123\"",
+      comp: "{input 2}/{menu match}/{input 1}/$replace",
+    }
+  )],
+  //-----------------------NUMBER------------------------------------------
   [12, new Process(12,
     "sum", "number", 
     [ {subtitle: "number", label: "value 1"}, {subtitle: "number", label: "value 2"}],
@@ -579,6 +597,7 @@ const processList = new Map([
       comp: "{input 1}/$exp",
     }
   )],
+  //-----------------------LIST------------------------------------------
   [31, new Process(31,
     "length", "list", 
     [ { subtitle: "", label: "list"} ], 
@@ -719,6 +738,7 @@ const processList = new Map([
       comp: "{input 2}/{input 1}/$arr_concat",
     }
   )],
+  //-----------------------FUNCTION------------------------------------------
   [37, new Process(37,
     "foldl", "function", 
     [ { subtitle: "", label: "function"}, { subtitle: "", label: "acc 0"}, { subtitle: "", label: "list"}], 
