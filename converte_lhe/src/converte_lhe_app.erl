@@ -19,6 +19,7 @@ start(_Type, _Args) ->
             {"/Util.js", cowboy_static, {priv_file, converte_lhe, "/pages/Util.js"}},
             {"/docs", cowboy_static, {priv_file, converte_lhe, "/pages/docs.html"}},
             {"/docs.js", cowboy_static, {priv_file, converte_lhe, "/pages/docs.js"}},
+            {"/docs.css", cowboy_static, {priv_file, converte_lhe, "/pages/docs.css"}},
             {"/functionList.js", cowboy_static, {priv_file, converte_lhe, "/pages/functionList.js"}},
             {"/components/[...]", cowboy_static, {priv_dir, converte_lhe, "/pages/components"}},
             {"/favicon/[...]", cowboy_static, {priv_dir, converte_lhe, "/pages/favicon"}},
