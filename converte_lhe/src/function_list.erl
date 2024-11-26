@@ -24,7 +24,7 @@ func("toFloat")  -> { 1, fun([F]) ->
                             end    
                         end};
 
-func("toString") -> { 1, fun([F]) -> list_to_binary(lists:flatten(io_lib:format("~s",[F]))) end};
+func("toString") -> { 1, fun([F]) -> list_to_binary(lists:flatten(io_lib:format("~w",[F]))) end};
 
 func("degreesToRadians") -> { 1, fun([F]) -> F * math:pi() / 180 end};
 func("radiansToDegrees") -> { 1, fun([F]) -> F * 180 / math:pi() end};

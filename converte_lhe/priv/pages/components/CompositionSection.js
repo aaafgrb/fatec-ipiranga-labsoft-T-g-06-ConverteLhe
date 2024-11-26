@@ -82,7 +82,8 @@ export default {
       Vue.nextTick(this.updatePositions)
     },
     onConnect(inIdentifier, inPortIndex, outIdentifier, outPortIndex){
-      this.processRows.get(inIdentifier).processData.connectToInputPort(inPortIndex, this.processRows.get(outIdentifier).processData, outPortIndex)
+      this.processRows.get(inIdentifier).processData
+        .connectToInputPort(inPortIndex, this.processRows, this.processRows.get(outIdentifier).processData, outPortIndex)
     },
     onContextMenu(pdata){
       //remove process from composition

@@ -149,23 +149,22 @@ Vue.createApp({
           let id = dict.has(x.identifier) ? dict.get(x.identifier) : createNodesLoop(x);
           let op = id == 1 ? this.specialRows.input : newProcesses.get(id)
 
-          r.connectToInputPort(i, op.processData, x.portIndex)
+          r.connectToInputPort(i, newProcesses, op.processData, x.portIndex)
         })
         newProcesses.set(rId, {processData: r})
         return rId;
       }
       if(out.connections.length <= 0){ return; } 
       createNodesLoop(out.connections[0])
-      this.specialRows.output.processData.connectToInputPort(0, newProcesses.get(dict.get(out.connections[0].identifier)).processData, out.connections[0].portIndex)
-
+      this.specialRows.output.processData.connectToInputPort(0, newProcesses, newProcesses.get(dict.get(out.connections[0].identifier)).processData, out.connections[0].portIndex)
       //dict of the current col position of each node
       //  positions are relative to the end of the array
       let posDict = new Map();
       //organize processess on cols and rows
       const addToPos = (pos, val) => {
         let len = this.cols.length
-        if(len - 1 - pos <= 0){ this.cols.splice(len - 1 - pos, 0, {rows: [val]})
-        }else{                  this.cols[len - 2 - pos].rows.push(val)
+        if(len - 1 - pos <= 0){ this.cols.splice(len - 1 - pos, 0, {rows: [val]}); 
+        }else{                  this.cols[len - 1 - pos].rows.push(val); 
         }
         posDict.set(val.processData.identifier, {c: pos, r: this.cols[len - 1 - pos].rows.length - 1})
       }
@@ -177,7 +176,7 @@ Vue.createApp({
           //if the process that the connections comes from already exists and is ahead (towards the end) of this node
           //  delete it and put it behind this node
           if(c < colPos){ 
-            this.cols[this.cols.length - 2 - c].rows.splice(r, 1)
+            this.cols[this.cols.length - 1 - c].rows.splice(r, 1)
             addToPos(colPos, oNode)
           }
         }else{

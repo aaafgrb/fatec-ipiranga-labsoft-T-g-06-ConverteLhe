@@ -57,14 +57,14 @@ export class ProcessData{
     this.data = data
   }
   // -- only call input port functions and let them take care of the output process data ports handling
-  connectToInputPort(inPortIndex, outProcessData, outPortIndex){
+  connectToInputPort(inPortIndex, processRows, newOutProcessData, outPortIndex){
     //if there's something connected replace by the new connection
     if(this.inPorts[inPortIndex]){
-      this.removeFromInputPort(outProcessData, inPortIndex)
+      this.removeFromInputPort(processRows.get(this.inPorts[inPortIndex].identifier).processData, inPortIndex)
     }
     
-    this.inPorts[inPortIndex] = {identifier: outProcessData.identifier, portIndex: outPortIndex}
-    outProcessData.outPorts[outPortIndex].push({identifier: this.identifier, portIndex: inPortIndex})
+    this.inPorts[inPortIndex] = {identifier: newOutProcessData.identifier, portIndex: outPortIndex}
+    newOutProcessData.outPorts[outPortIndex].push({identifier: this.identifier, portIndex: inPortIndex})
   }
   removeFromInputPort(outProcessData, inPortIndex){
     outProcessData.outPorts[this.inPorts[inPortIndex].portIndex] = 
