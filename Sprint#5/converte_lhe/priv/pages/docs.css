@@ -1,0 +1,58 @@
+table {
+    width: 100%;
+    border-collapse: collapse; /* Ensures that borders between cells are joined */
+    color: white; /* Set text color to white for contrast */
+    border-radius: 12px; /* Rounded corners for the entire table */
+    overflow: hidden; /* Ensures rounded corners are respected */
+}
+
+th, td {
+    padding: 6px; /* Reduced padding inside cells */
+    text-align: left;
+}
+
+th {
+    font-weight: bold;
+    background-color: #555555; /* Dark grey for the header */
+}
+
+.docs-title-type {
+    display: flex;
+    align-items: center;
+    padding: 6px; /* Padding inside title-type section */
+    border-radius: 8px 8px 0 0; /* Rounded top-left and top-right corners for title cell */
+}
+
+.docs-title {
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 1.3em
+}
+
+.docs-type {
+    font-style: italic;
+    margin-left: auto; /* Move the type to the right side */
+}
+
+.docs-description-cell {
+    font-size: 1.2em; /* Slightly larger text for description */
+    min-height: 60px; /* Minimum height for the description cell */
+    border-top: 1px solid black; /* Thicker black border for the description cell */
+    border-bottom: 1px solid black; /* Thicker black border for the description cell */
+    padding: 6px; /* Padding inside the description cell */
+}
+
+.docs-menu {
+    padding: 6px; /* Padding inside menu section */
+}
+
+.docs-example {
+    padding: 6px; /* Padding inside example section */
+    border-top: 1px solid black; /* Clear border between menu and example sections */
+}
+
+.docs-comp {
+    padding: 6px; /* Padding inside example section */
+    border-radius: 0 0 8px 8px; /* Rounded bottom-left and bottom-right corners for example cell */
+    border-top: 1px solid black; /* Clear border between menu and example sections */
+}
