@@ -291,7 +291,7 @@ const processList = new Map([
   )],
   [44, new Process(44,
     "concat", "string", 
-    [ { subtitle: "", label: "string"}, { subtitle: "", label: "string"}], 
+    [ { subtitle: "string", label: "first"}, { subtitle: "string", label: "second"}], 
     [ { subtitle: "", label: "string", 
       getComp: (pdata, pmap) => applyFunc("$concat", [getComposition(pdata.inPorts[0], pmap), getComposition(pdata.inPorts[1], pmap)]) } ],
     [],
@@ -359,7 +359,7 @@ const processList = new Map([
     {
       desc: "splits a string in two parts (depending on the number of characters of the last part)",
       menu: "number of characters (integer)",
-      example: "menu: \"2\" | input: \"abcdef\" | output: {\"ab\", \"cdef\"}",
+      example: "menu: \"2\" | input: \"abcdef\" | output: {\"ef\", \"abcd\"}",
       comp: "{menu number of characters}/{input 1}/$last | {menu number of characters}/{input 1}/$last_init",
     }
   )],
