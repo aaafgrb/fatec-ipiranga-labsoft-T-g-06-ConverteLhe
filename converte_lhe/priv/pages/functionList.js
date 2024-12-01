@@ -53,7 +53,8 @@ export class ProcessData{
     this.process = process
     this.identifier = identifier
     this.inPorts = inPorts ? inPorts : this.inPorts = Array(process.inPorts.length).fill(null)
-    this.outPorts = outPorts ? outPorts : this.outPorts = Array(process.outPorts.length).fill([])
+    this.outPorts = outPorts ? outPorts : this.outPorts = Array.from({ length: process.outPorts.length }, () => []);
+    
     this.data = data
   }
   // -- only call input port functions and let them take care of the output process data ports handling
@@ -275,17 +276,17 @@ const processList = new Map([
   )],
   //-----------------------STRING------------------------------------------
   [41, new Process(41,
-    "split", "string", 
+    "delimiter", "string", 
     [ { subtitle: "", label: "string"}, { subtitle: "string", label: "delimiter"} ], 
     [ { subtitle: "", label: "list", 
-      getComp: (pdata, pmap) => applyFunc("$split", [getComposition(pdata.inPorts[0], pmap), getComposition(pdata.inPorts[1], pmap)]) } ],
+      getComp: (pdata, pmap) => applyFunc("$delimiter", [getComposition(pdata.inPorts[0], pmap), getComposition(pdata.inPorts[1], pmap)]) } ],
     [],
     [],
     {
       desc: "Splits the string by a delimiter (doenst work with lists)",
       menu: "no",
       example: "input: \"a.a.s.d\" | output: \"[a,a,s,d]\"",
-      comp: "{input 2}/{input 1}/$split",
+      comp: "{input 2}/{input 1}/$delimiter",
     }
   )],
   [44, new Process(44,
@@ -316,6 +317,53 @@ const processList = new Map([
       comp: "{input 2}/{menu match}/{input 1}/$replace",
     }
   )],
+  [47, new Process(47,
+    "copy", "string", 
+    [ { subtitle: "string", label: "subject"}, { subtitle: "integer", label: "quantity"}], 
+    [ { subtitle: "", label: "string", 
+      getComp: (pdata, pmap) => applyFunc("$copy", [getComposition(pdata.inPorts[0], pmap), getComposition(pdata.inPorts[1], pmap)]) } ],
+    [],
+    [],
+    {
+      desc: "returns a string a number of times",
+      menu: "no",
+      example: "input: \"{11aa, 2}\" | output: \"11aa11aa\"",
+      comp: "{input 2}/{input 1}/$copy",
+    }
+  )],
+  [48, new Process(48,
+    "first", "string", 
+    [ { subtitle: "string", label: "subject"}], 
+    [ { subtitle: "string", label: "start", 
+      getComp: (pdata, pmap) => applyFunc("$first", [getComposition(pdata.inPorts[0], pmap), `i${pdata.data[0]}`]) }, 
+      { subtitle: "string", label: "end", 
+        getComp: (pdata, pmap) => applyFunc("$first_tail", [getComposition(pdata.inPorts[0], pmap), `i${pdata.data[0]}`]) },],
+    [{ label: "number of characters", type: "txtbox" } ],
+    ["1"],
+    {
+      desc: "splits a string in two parts (depending on the number of characters of the first part)",
+      menu: "number of characters (integer)",
+      example: "menu: \"2\" | input: \"abcdef\" | output: {\"ab\", \"cdef\"}",
+      comp: "{menu number of characters}/{input 1}/$first | {menu number of characters}/{input 1}/$first_tail",
+    }
+  )],
+  [49, new Process(49,
+    "last", "string", 
+    [ { subtitle: "string", label: "subject"}], 
+    [ { subtitle: "string", label: "end", 
+      getComp: (pdata, pmap) => applyFunc("$last", [getComposition(pdata.inPorts[0], pmap), `i${pdata.data[0]}`]) }, 
+      { subtitle: "string", label: "start", 
+        getComp: (pdata, pmap) => applyFunc("$last_init", [getComposition(pdata.inPorts[0], pmap), `i${pdata.data[0]}`]) },],
+    [{ label: "number of characters", type: "txtbox" } ],
+    ["1"],
+    {
+      desc: "splits a string in two parts (depending on the number of characters of the last part)",
+      menu: "number of characters (integer)",
+      example: "menu: \"2\" | input: \"abcdef\" | output: {\"ab\", \"cdef\"}",
+      comp: "{menu number of characters}/{input 1}/$last | {menu number of characters}/{input 1}/$last_init",
+    }
+  )],
+
   //-----------------------NUMBER------------------------------------------
   [12, new Process(12,
     "sum", "number", 

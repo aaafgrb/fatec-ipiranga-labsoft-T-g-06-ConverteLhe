@@ -84,6 +84,7 @@ export default {
     onConnect(inIdentifier, inPortIndex, outIdentifier, outPortIndex){
       this.processRows.get(inIdentifier).processData
         .connectToInputPort(inPortIndex, this.processRows, this.processRows.get(outIdentifier).processData, outPortIndex)
+      console.log(this.processRows.get(outIdentifier).processData)
     },
     onContextMenu(pdata){
       //remove process from composition

@@ -75,6 +75,9 @@ func("arr_tail")        -> { 1, fun([A]) -> [_|T] = A, T end };
 
 func("arr_duplicate")   -> { 2, fun([N, E]) -> lists:duplicate(N, E) end };
 
+func("arr_longest_common_prefix") -> { 1, fun([L]) -> binary:longest_common_prefix(L) end };
+func("arr_longest_common_suffix") -> { 1, fun([L]) -> binary:longest_common_suffix(L) end };
+
 % functions
 
 func("foldl")    -> { 3, fun([F, A0, S]) -> lists:foldl(fun(E, A) -> F([A, E]) end, A0, S) end };
@@ -82,10 +85,15 @@ func("map")      -> { 2, fun([F, S])     -> lists:map(fun(E) -> F([E]) end, S) e
 
 % strings
 
-func("split")    -> { 2, fun([S, D]) -> binary:split(S, [D], [global]) end };
-func("concat")   -> { 2, fun([F, S]) -> <<F/binary, S/binary>> end };
-func("replace")  -> { 3, fun([S, M, R]) -> binary:replace(S, [M], R, [global]) end };
-
+func("delimiter")   -> { 2, fun([S, D]) -> binary:split(S, [D], [global]) end };
+func("concat")      -> { 2, fun([F, S]) -> <<F/binary, S/binary>> end };
+func("replace")     -> { 3, fun([S, M, R]) -> binary:replace(S, [M], R, [global]) end };
+func("copy")        -> { 2, fun([S, N]) -> binary:copy(S, N) end };
+func("reverse")     -> { 1, fun([S]) -> list_to_binary(lists:reverse(binary_to_list(S))) end };
+func("first")       -> { 2, fun([S, N]) -> list_to_binary(element(1, lists:split(N, binary_to_list(S)))) end };
+func("first_tail")  -> { 2, fun([S, N]) -> list_to_binary(element(2, lists:split(N, binary_to_list(S)))) end };
+func("last")        -> { 2, fun([S, N]) -> D = binary_to_list(S), list_to_binary(element(2, lists:split(length(D) - N, D))) end };
+func("last_init")   -> { 2, fun([S, N]) -> D = binary_to_list(S), list_to_binary(element(1, lists:split(length(D) - N, D))) end };
 
 
 func(F) -> throw({exception_unsupported_function, F}).
